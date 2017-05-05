@@ -15,13 +15,17 @@ function naytaTiedot(data) {
   $.each(data, function(index, tapahtuma) {
     otsikko = tapahtuma.title;
     kuva = tapahtuma.image.src;
+    kuva_alt = tapahtuma.image.alt;
     kuvaus = tapahtuma.description;
+    paikkakunta = tapahtuma.contact_info.city;
+    yhteystiedot = tapahtuma.contact_info.link;
   });
 
   var tapahtumaElementti = $('#tapahtuma').clone();
-  tapahtumaElementti.children('h2').text(otsikko);
+  tapahtumaElementti.children('h2').html(otsikko + ' <small>' + paikkakunta + '</small>');
   tapahtumaElementti.find('.kuvaus').text(kuvaus);
-  tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" />');
+  tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" alt="' + kuva_alt + '" />');
+  tapahtumaElementti.find('.yhteystiedot').html('<a href="' + yhteystiedot + '" target="_blank">' + yhteystiedot + '</a>');
   tapahtumaElementti.removeAttr('id');
   $('#tapahtumat').append(tapahtumaElementti);
 }
