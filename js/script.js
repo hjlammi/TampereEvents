@@ -15,14 +15,13 @@ function naytaTiedot(data) {
   $.each(data, function(index, tapahtuma) {
     otsikko = tapahtuma.title;
     kuva = tapahtuma.image.src;
-    console.log(tapahtuma);
-    console.log(kuva);
     kuvaus = tapahtuma.description;
   });
 
   var tapahtumaElementti = $('#tapahtuma').clone();
   tapahtumaElementti.children('h2').text(otsikko);
-  tapahtumaElementti.find('#kuvaus').text(kuvaus);
+  tapahtumaElementti.find('.kuvaus').text(kuvaus);
+  tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" />');
   tapahtumaElementti.removeAttr('id');
   $('#tapahtumat').append(tapahtumaElementti);
 }
