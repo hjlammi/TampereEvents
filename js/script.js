@@ -11,21 +11,41 @@
 }());
 
 function naytaTiedot(data) {
-  var otsikko;
   $.each(data, function(index, tapahtuma) {
     otsikko = tapahtuma.title;
     kuva = tapahtuma.image.src;
     kuva_alt = tapahtuma.image.alt;
     kuvaus = tapahtuma.description;
     paikkakunta = tapahtuma.contact_info.city;
-    yhteystiedot = tapahtuma.contact_info.link;
+    osoite = tapahtuma.contact_info.address;
+    info = tapahtuma.contact_info.link;
+
+    console.log(tapahtuma);
+    if (tapahtuma.start_datetime === null) {
+      if (tapahtuma.times[0] === undefined) {
+      } else {
+        tapahtuma_aika = tapahtuma.times[0].start_datetime;
+      }
+    } else {
+      tapahtuma_aika = tapahtuma.start_datetime;
+    }
+
+    nykyinenHetki = new Date();
+    nykyHetkiMS = Date.parse(nykyinenHetki);
+    if (nykyHetkiMS < tapahtuma_aika) {
+      ajankohta = tapahtuma_aika;
+    } else {
+      ajankohta = null;
+    }
+
   });
 
   var tapahtumaElementti = $('#tapahtuma').clone();
-  tapahtumaElementti.children('h2').html(otsikko + ' <small>' + paikkakunta + '</small>');
+  tapahtumaElementti.children('h2').html(otsikko + ' <small>' + osoite + ', ' + paikkakunta + '</small>');
   tapahtumaElementti.find('.kuvaus').text(kuvaus);
   tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" alt="' + kuva_alt + '" />');
-  tapahtumaElementti.find('.yhteystiedot').html('<a href="' + yhteystiedot + '" target="_blank">' + yhteystiedot + '</a>');
+  tapahtumaElementti.find('.info').html('<a href="' + info + '" target="_blank">' + info + '</a>');
+  tapahtumaElementti.find('.ajat ').html('<p>' + ajankohta + '</p>');
   tapahtumaElementti.removeAttr('id');
   $('#tapahtumat').append(tapahtumaElementti);
 }
