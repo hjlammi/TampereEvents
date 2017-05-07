@@ -76,7 +76,8 @@ function annaTapahtumaAika(tapahtuma, i) {
 // Metodi lisää tapahtuman tiedot sivulle.
 function lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta) {
   var tapahtumaElementti = $('#tapahtuma').clone();
-  tapahtumaElementti.children('h2').html(otsikko + ' <small>' + osoite + ((paikkakunta === null) ? '' : ', ' + paikkakunta) + '</small>');
+  tapahtumaElementti.find('h2').html(otsikko + ' <small>' + osoite +
+    ((paikkakunta === null) ? '' : ', ' + paikkakunta) + '</small>');
   tapahtumaElementti.find('.kuvaus').text(kuvaus);
   tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" alt="' + kuva_alt + '" />');
   tapahtumaElementti.find('.info').html('<a href="' + info + '" target="_blank">' + info + '</a>');
