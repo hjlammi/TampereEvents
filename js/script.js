@@ -15,6 +15,7 @@ var lkm = 10;
 
 function naytaTiedot(data) {
   var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta;
+  console.log(data);
   $.each(data, function(index, tapahtuma) {
     ajankohta = [];
     otsikko = tapahtuma.title;
@@ -33,18 +34,22 @@ function naytaTiedot(data) {
         console.log("tapahtuma.times.length: " + tapahtuma.times.length);
         console.log("naytettavienAikojenLkm: " + naytettavienAikojenLkm);
         for (var i = 0; i < naytettavienAikojenLkm; i++) {
-          var tapahtuma_aika = tapahtuma.times[i].start_datetime;
+          var tapahtuma_aika = annaTapahtumaAika(tapahtuma, i);
+          console.log("tapahtuma_aika: " + tapahtuma_aika);
 
-          var nykyinenHetki = new Date();
-          var nykyHetkiMS = Date.parse(nykyinenHetki);
-          if (nykyHetkiMS < tapahtuma_aika) {
+          if (tapahtuma_aika !== null) {
             ajankohta.push(tapahtuma_aika);
-            console.log("tapahtuma_aika: " + tapahtuma_aika);
           }
         }
       }
     } else {
-      ajankohta.push(tapahtuma.start_datetime);
+      var alkuaika = tapahtuma.start_datetime;
+      var loppuaika = tapahtuma.end_datetime;
+      var ajat = {
+        start_datetime: alkuaika,
+        end_datetime: loppuaika
+      };
+      ajankohta.push(ajat);
     }
     console.log("ajankohta:", ajankohta);
 
@@ -55,19 +60,18 @@ function naytaTiedot(data) {
   });
 }
 
-/* Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
+//Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
 function annaTapahtumaAika(tapahtuma, i) {
-  tapahtuma_aika =
-
+  tapahtuma_aika = tapahtuma.times[i].start_datetime;
 
   var nykyinenHetki = new Date();
   var nykyHetkiMS = Date.parse(nykyinenHetki);
   if (nykyHetkiMS < tapahtuma_aika) {
-    return tapahtuma_aika;
+    return tapahtuma.times[i];
   } else {
     return null;
   }
-}*/
+}
 
 // Metodi lisää tapahtuman tiedot sivulle.
 function lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta) {
@@ -77,10 +81,13 @@ function lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, in
   tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" alt="' + kuva_alt + '" />');
   tapahtumaElementti.find('.info').html('<a href="' + info + '" target="_blank">' + info + '</a>');
 
-  $.each(ajankohta, function(index, alkuaika) {
-    var aika = moment(alkuaika).format("D.M.YYYY");
-    var klo = moment(alkuaika). format("hh.mm");
-    tapahtumaElementti.find('.ajat ').append('<p>' + aika + ' at ' + klo + '</p>');
+  $.each(ajankohta, function(index, ajat) {
+    var alkamisaika = moment(ajat.start_datetime).format("D.M.YYYY");
+    var alkaaKlo = moment(ajat.start_datetime).format("k.mm");
+    var loppumisaika = moment(ajat.end_datetime).format("D.M.YYYY");
+    var loppuuKlo = moment(ajat.end_datetime).format("k.mm");
+
+    tapahtumaElementti.find('.ajat ').append('<p>' + alkamisaika + ' at ' + alkaaKlo + ' &ndash; ' + loppumisaika + ' at ' + loppuuKlo + '</p>');
   });
 
   tapahtumaElementti.removeAttr('id');
