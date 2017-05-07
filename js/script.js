@@ -16,6 +16,7 @@ var lkm = 10;
 function naytaTiedot(data) {
   var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta;
   $.each(data, function(index, tapahtuma) {
+    ajankohta = [];
     otsikko = tapahtuma.title;
     kuva = tapahtuma.image.src;
     kuva_alt = tapahtuma.image.alt;
@@ -25,36 +26,48 @@ function naytaTiedot(data) {
     info = tapahtuma.contact_info.link;
 
     console.log(tapahtuma);
-    ajankohta = annaTapahtumaAika(tapahtuma);
+    if (tapahtuma.start_datetime === null) {
+      if (tapahtuma.times.length === 0) {
+      } else {
+        var naytettavienAikojenLkm = (tapahtuma.times.length < 3) ? tapahtuma.times.length : 3;
+        console.log("tapahtuma.times.length: " + tapahtuma.times.length);
+        console.log("naytettavienAikojenLkm: " + naytettavienAikojenLkm);
+        for (var i = 0; i < naytettavienAikojenLkm; i++) {
+          var tapahtuma_aika = tapahtuma.times[i].start_datetime;
 
-    if (ajankohta !== null && lkm > 0) {
+          var nykyinenHetki = new Date();
+          var nykyHetkiMS = Date.parse(nykyinenHetki);
+          if (nykyHetkiMS < tapahtuma_aika) {
+            ajankohta.push(tapahtuma_aika);
+            console.log("tapahtuma_aika: " + tapahtuma_aika);
+          }
+        }
+      }
+    } else {
+      ajankohta.push(tapahtuma.start_datetime);
+    }
+    console.log("ajankohta:", ajankohta);
+
+    if (ajankohta.length > 0 && lkm > 0) {
       lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta);
       lkm--;
     }
   });
 }
 
-// Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
-function annaTapahtumaAika(tapahtuma) {
-  if (tapahtuma.start_datetime === null) {
-    if (tapahtuma.times[0] === undefined) {
-      return null;
-    } else {
-      tapahtuma_aika = tapahtuma.times[0].start_datetime;
-    }
-  } else {
-    tapahtuma_aika = tapahtuma.start_datetime;
-  }
+/* Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
+function annaTapahtumaAika(tapahtuma, i) {
+  tapahtuma_aika =
+
 
   var nykyinenHetki = new Date();
   var nykyHetkiMS = Date.parse(nykyinenHetki);
-  console.log(nykyHetkiMS);
   if (nykyHetkiMS < tapahtuma_aika) {
     return tapahtuma_aika;
   } else {
     return null;
   }
-}
+}*/
 
 // Metodi lisää tapahtuman tiedot sivulle.
 function lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta) {
@@ -64,10 +77,12 @@ function lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, in
   tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" alt="' + kuva_alt + '" />');
   tapahtumaElementti.find('.info').html('<a href="' + info + '" target="_blank">' + info + '</a>');
 
-  var aika = moment(ajankohta).format("D.M.YYYY");
-  var klo = moment(ajankohta). format("hh.mm");
+  $.each(ajankohta, function(index, alkuaika) {
+    var aika = moment(alkuaika).format("D.M.YYYY");
+    var klo = moment(alkuaika). format("hh.mm");
+    tapahtumaElementti.find('.ajat ').append('<p>' + aika + ' at ' + klo + '</p>');
+  });
 
-  tapahtumaElementti.find('.ajat ').html('<p>' + aika + ' at ' + klo + '</p>');
   tapahtumaElementti.removeAttr('id');
   $('#tapahtumat').append(tapahtumaElementti);
 }
