@@ -7,24 +7,27 @@ var lkm = 10;
     type: 'GET',
     dataType: 'json',
     url: "https://visittampere.fi/api/search?type=event&limit=100",
-    success: naytaTiedot,
+    success: init,
     error: function() {
       alert( "Tiedon noutaminen ei onnistunut" );
     }
   });
 }());
 
-// Näytetään kartta.
-(function() {
-  var tampere = {lat: 61.507756, lng: 23.760240};
-  var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
-          center: tampere
-        });
-}());
+function init(data) {
+  var tapahtumat = naytaTiedot(data);
+  // Piirretään kartta ilman markereita.
+  initMap();
+
+  $.each(tapahtumat, function(index, tapahtuma) {
+    geocodeAddress(geocoder, map, tapahtuma);
+  });
+}
+
 
 function naytaTiedot(data) {
   var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta;
+  var tapahtumat = [];
   $.each(data, function(index, tapahtuma) {
     ajankohta = [];
     otsikko = tapahtuma.title;
@@ -38,6 +41,7 @@ function naytaTiedot(data) {
     if (tapahtuma.start_datetime === null) {
       if (tapahtuma.times.length === 0) {
       } else {
+        // Näytetään tapahtuman ajoista maksimissaan kolme.
         var naytettavienAikojenLkm = (tapahtuma.times.length < 3) ? tapahtuma.times.length : 3;
         for (var i = 0; i < naytettavienAikojenLkm; i++) {
           var tapahtuma_aika = annaTapahtumaAika(tapahtuma, i);
@@ -59,10 +63,46 @@ function naytaTiedot(data) {
 
     if (ajankohta.length > 0 && lkm > 0) {
       lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta);
+      tapahtumat.push(tapahtuma);
       lkm--;
+    }
+
+  });
+  return tapahtumat;
+}
+
+/*
+ * Apumetodit.
+ */
+
+// Näytetään kartta.
+function initMap() {
+  var tampere = {lat: 61.507756, lng: 23.760240};
+  map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: tampere
+        });
+  geocoder = new google.maps.Geocoder();
+}
+
+function geocodeAddress(geocoder, map, tapahtuma) {
+  var address = tapahtuma.contact_info.address + ', Tampere';
+  var otsikko = tapahtuma.title;
+  console.log(address);
+  geocoder.geocode({'address': address}, function(results, status) {
+    if (status === 'OK') {
+      // map.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+        map: map,
+        position: results[0].geometry.location,
+        title: otsikko + ', ' + address
+      });
+    } else {
+      // alert('Geocode was not successful for the following reason: ' + status);
     }
   });
 }
+
 
 //Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
 function annaTapahtumaAika(tapahtuma, i) {
@@ -70,6 +110,9 @@ function annaTapahtumaAika(tapahtuma, i) {
 
   var nykyinenHetki = new Date();
   var nykyHetkiMS = Date.parse(nykyinenHetki);
+  // Verrataan nykyhetkeä tapahtuma-aikaan. Jos tapahtuma ei ole vielä mennyt,
+  // palautetaan tapahtuman times-olio, jossa on sekä alku- että loppuaika.
+  // Jos tapahtuma on jo mennyt, palautetaan null.
   if (nykyHetkiMS < tapahtuma_aika) {
     return tapahtuma.times[i];
   } else {
