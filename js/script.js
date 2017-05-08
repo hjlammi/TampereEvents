@@ -1,6 +1,7 @@
 // Näytetään kymmenen tapahtumaa.
 var lkm = 10;
 
+// Haetaan tiedot.
 (function() {
   $.ajax({
     type: 'GET',
@@ -13,9 +14,17 @@ var lkm = 10;
   });
 }());
 
+// Näytetään kartta.
+(function() {
+  var tampere = {lat: 61.507756, lng: 23.760240};
+  var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: tampere
+        });
+}());
+
 function naytaTiedot(data) {
   var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta;
-  console.log(data);
   $.each(data, function(index, tapahtuma) {
     ajankohta = [];
     otsikko = tapahtuma.title;
@@ -26,16 +35,12 @@ function naytaTiedot(data) {
     osoite = tapahtuma.contact_info.address;
     info = tapahtuma.contact_info.link;
 
-    console.log(tapahtuma);
     if (tapahtuma.start_datetime === null) {
       if (tapahtuma.times.length === 0) {
       } else {
         var naytettavienAikojenLkm = (tapahtuma.times.length < 3) ? tapahtuma.times.length : 3;
-        console.log("tapahtuma.times.length: " + tapahtuma.times.length);
-        console.log("naytettavienAikojenLkm: " + naytettavienAikojenLkm);
         for (var i = 0; i < naytettavienAikojenLkm; i++) {
           var tapahtuma_aika = annaTapahtumaAika(tapahtuma, i);
-          console.log("tapahtuma_aika: " + tapahtuma_aika);
 
           if (tapahtuma_aika !== null) {
             ajankohta.push(tapahtuma_aika);
@@ -51,7 +56,6 @@ function naytaTiedot(data) {
       };
       ajankohta.push(ajat);
     }
-    console.log("ajankohta:", ajankohta);
 
     if (ajankohta.length > 0 && lkm > 0) {
       lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta);

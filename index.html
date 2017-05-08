@@ -8,25 +8,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <h1>Tampereen tapahtumat</h1>
-    <div class="container" id="tapahtumat">
-      <div class="container tapahtuma" id="tapahtuma">
-        <div class="row">
-          <h2 class="col-md-12">Otsikko</h2>
-        </div>
-        <div class="row">
-          <div class="col-md-4 col-sm-4 kuva"></div>
-          <div class="col-md-8 col-sm-8">
-            <p class= "kuvaus">Kuvaus</p>
-            <p class="info">Nettisivut</p>
-            <h4>Seuraavat ajankohdat:</h4>
-            <div class="ajat"></div>
+    <div class="container">
+      <h1>Tampere Events</h1>
+      <div class="row">
+        <div class="col-md-8" id="tapahtumat">
+          <div class="tapahtuma" id="tapahtuma">
+            <div class="row">
+              <h2 class="col-md-12">Otsikko</h2>
+            </div>
+            <div class="row">
+              <div class="col-md-4 col-sm-4 kuva"></div>
+              <div class="col-md-8 col-sm-8">
+                <p class= "kuvaus">Kuvaus</p>
+                <p class="info">Nettisivut</p>
+                <h4>Seuraavat ajankohdat:</h4>
+                <div class="ajat"></div>
+              </div>
+            </div>
           </div>
+        </div>
+        <div class="col-md-4 map-container">
+          <h4>Tapahtumat kartalla:</h4>
+          <div id="map">Kartta</div>
         </div>
       </div>
     </div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEVPXU879OT_yIO2Pmy3TVtIFIL_LsMj0"></script>
     <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
     <script type="text/javascript" src="js/moment-with-locales.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
+
   </body>
 </html>
