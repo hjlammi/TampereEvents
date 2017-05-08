@@ -19,9 +19,7 @@ function init(data) {
   // Piirretään kartta ilman markereita.
   initMap();
 
-  $.each(tapahtumat, function(index, tapahtuma) {
-    geocodeAddress(geocoder, map, tapahtuma);
-  });
+  naytaMarkeritKartalla(map, tapahtumat);
 }
 
 
@@ -82,27 +80,33 @@ function initMap() {
           zoom: 10,
           center: tampere
         });
-  geocoder = new google.maps.Geocoder();
 }
 
-function geocodeAddress(geocoder, map, tapahtuma) {
-  var address = tapahtuma.contact_info.address + ', Tampere';
-  var otsikko = tapahtuma.title;
-  console.log(address);
-  geocoder.geocode({'address': address}, function(results, status) {
-    if (status === 'OK') {
-      // map.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-        map: map,
-        position: results[0].geometry.location,
-        title: otsikko + ', ' + address
-      });
-    } else {
-      // alert('Geocode was not successful for the following reason: ' + status);
-    }
+function naytaMarkeritKartalla(map, tapahtumat) {
+  geocoder = new google.maps.Geocoder();
+  var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var markers = [];
+  var i = 0;
+  var markerclusterer = new MarkerClusterer(map, [],
+    {imagePath: 'images/m'});
+  $.each(tapahtumat, function(index, tapahtuma){
+    var address = tapahtuma.contact_info.address + ', Tampere';
+    var otsikko = tapahtuma.title;
+    geocoder.geocode({'address': address}, function(results, status) {
+      if (status === 'OK') {
+        var lat = results[0].geometry.location.lat();
+        var lng = results[0].geometry.location.lng() + 0.00004 * i;
+        markerclusterer.addMarker(new google.maps.Marker({
+          position: {lat: lat, lng: lng},
+          title: otsikko + ', ' + address,
+        }), true);
+        i++;
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
   });
 }
-
 
 //Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
 function annaTapahtumaAika(tapahtuma, i) {
