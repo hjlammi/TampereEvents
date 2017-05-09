@@ -57,3 +57,17 @@ describe("annaVainTulevatAjat", function() {
       {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]);
   });
 });
+
+describe("annaAlkuJaLoppuaika", function() {
+
+  it("returns start and end times", function() {
+    var tapahtuma = {
+      start_datetime: Date.parse("2010-01-01T00:00:00"),
+      end_datetime: Date.parse("2010-01-02T00:00:00")
+    }
+
+    expect(annaAlkuJaLoppuaika(tapahtuma)).toEqual({
+      start_datetime: Date.parse("2010-01-01T00:00:00"),
+      end_datetime: Date.parse("2010-01-02T00:00:00")});
+  });
+});

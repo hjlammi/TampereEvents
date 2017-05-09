@@ -29,10 +29,10 @@ function init(data) {
 
 
 function naytaTiedot(data) {
-  var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta;
+  var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajat;
   var tapahtumat = [];
   $.each(data, function(index, tapahtuma) {
-    ajankohta = [];
+    ajat = [];
     otsikko = tapahtuma.title;
     kuva = tapahtuma.image.src;
     kuva_alt = tapahtuma.image.alt;
@@ -43,29 +43,27 @@ function naytaTiedot(data) {
 
     // Jos tapahtuma on kertaluontoinen, otetaan talteen tapahtuman alku- ja loppuajat.
     if (tapahtuma.single_datetime) {
-      var alkuaika = tapahtuma.start_datetime;
-      var loppuaika = tapahtuma.end_datetime;
-      var ajat = {
-        start_datetime: alkuaika,
-        end_datetime: loppuaika
-      };
-      ajankohta.push(ajat);
+      ajat.push(annaAlkuJaLoppuaika(tapahtuma));
     // Jos tapahtumalla on useita aikoja.
     } else {
+      // Kutsutaan metodia, joka palauttaa taulukossa tapahtuman tulevat ajat.
       var tapahtumanTulevatAjat = annaVainTulevatAjat(tapahtuma);
       // Näytetään tapahtuman ajoista maksimissaan kolme.
-      var naytettavienAikojenLkm = (tapahtuma.times.length < 3) ? tapahtuma.times.length : 3;
-      for (var i = 0; i < naytettavienAikojenLkm; i++) {
+      // var naytettavienAikojenLkm = (tapahtumanTulevatAjat.length < 3) ? tapahtumanTulevatAjat.length : 3;
+      $.each(tapahtumanTulevatAjat, function(i){
+        ajat.push(tapahtumanTulevatAjat[i]);
+        return (i < 2);
+      });
+      /*for (var i = 0; i < naytettavienAikojenLkm; i++) {
         var tapahtuma_aika = annaTapahtumaAika(tapahtuma, i);
 
         if (tapahtuma_aika !== null) {
-          ajankohta.push(tapahtuma_aika);
         }
-      }
+      }*/
     }
 
-    if (ajankohta.length > 0) {
-      lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta);
+    if (ajat.length > 0) {
+      lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajat);
       tapahtumat.push(tapahtuma);
     }
 

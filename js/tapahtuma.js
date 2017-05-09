@@ -19,13 +19,22 @@ function annaTapahtumaAika(tapahtuma, i) {
 function annaVainTulevatAjat(tapahtuma) {
   var nykyHetkiMS = Date.parse(new Date());
   var tulevatAjat = [];
-  console.log(tapahtuma.times);
   $.each(tapahtuma.times, function(index, ajat) {
     var alkuaika = ajat.start_datetime;
     if (nykyHetkiMS < alkuaika) {
       tulevatAjat.push(tapahtuma.times[index]);
-      console.log(tulevatAjat);
     }
   });
   return tulevatAjat;
+}
+
+// Metodi saa parametrina tapahtuman ja antaa paluuarvona tapahtuman alku ja loppuajan.
+function annaAlkuJaLoppuaika(tapahtuma) {
+  var alkuaika = tapahtuma.start_datetime;
+  var loppuaika = tapahtuma.end_datetime;
+  var alkuJaLoppuaika = {
+    start_datetime: alkuaika,
+    end_datetime: loppuaika
+  };
+  return alkuJaLoppuaika;
 }
