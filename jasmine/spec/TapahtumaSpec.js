@@ -27,3 +27,33 @@ describe("annaTapahtumaAika", function() {
   });
 
 });
+
+describe("annaVainTulevatAjat", function() {
+
+  it("returns future dates", function() {
+    var tapahtuma = {
+      times: [
+        {
+          start_datetime: Date.parse("2010-01-01T00:00:00"),
+          end_datetime: Date.parse("2010-01-02T00:00:00")
+        },
+        {
+          start_datetime: Date.parse("2015-01-01T00:00:00"),
+          end_datetime: Date.parse("2015-01-02T00:00:00")
+        },
+        {
+          start_datetime: Date.parse("2018-01-01T00:00:00"),
+          end_datetime: Date.parse("2018-01-02T00:00:00")
+        },
+        {
+          start_datetime: Date.parse("2020-01-01T00:00:00"),
+          end_datetime: Date.parse("2020-01-02T00:00:00")
+        }
+      ]
+    }
+
+    expect(annaVainTulevatAjat(tapahtuma)).toEqual([
+      {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+      {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]);
+  });
+});

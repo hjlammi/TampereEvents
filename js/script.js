@@ -1,14 +1,12 @@
-// Näytetään kymmenen tapahtumaa.
-var lkm = 10;
 
 // Haetaan tiedot.
 $('button').on('click', function(){
   var start_datetime = Date.parse(new Date());
-  var end_datetime = Date.parse(new Date()) + 7*24*60*60*1000;
+  // var end_datetime = Date.parse(new Date()) + 14*24*60*60*1000;
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: "https://visittampere.fi/api/search?type=event&start_datetime=" + start_datetime + "&end_datetime=" + end_datetime,
+    url: "https://visittampere.fi/api/search?type=event&limit=10&start_datetime=" + start_datetime /*+ "&end_datetime=" + end_datetime*/,
     success: init,
     headers: {
       "Accept-Language": ''
@@ -43,22 +41,8 @@ function naytaTiedot(data) {
     osoite = tapahtuma.contact_info.address;
     info = tapahtuma.contact_info.link;
 
-    console.log(otsikko);
-
-    if (tapahtuma.start_datetime === null) {
-      if (tapahtuma.times.length === 0) {
-      } else {
-        // Näytetään tapahtuman ajoista maksimissaan kolme.
-        var naytettavienAikojenLkm = (tapahtuma.times.length < 3) ? tapahtuma.times.length : 3;
-        for (var i = 0; i < naytettavienAikojenLkm; i++) {
-          var tapahtuma_aika = annaTapahtumaAika(tapahtuma, i);
-
-          if (tapahtuma_aika !== null) {
-            ajankohta.push(tapahtuma_aika);
-          }
-        }
-      }
-    } else {
+    // Jos tapahtuma on kertaluontoinen, otetaan talteen tapahtuman alku- ja loppuajat.
+    if (tapahtuma.single_datetime) {
       var alkuaika = tapahtuma.start_datetime;
       var loppuaika = tapahtuma.end_datetime;
       var ajat = {
@@ -66,12 +50,23 @@ function naytaTiedot(data) {
         end_datetime: loppuaika
       };
       ajankohta.push(ajat);
+    // Jos tapahtumalla on useita aikoja.
+    } else {
+      var tapahtumanTulevatAjat = annaVainTulevatAjat(tapahtuma);
+      // Näytetään tapahtuman ajoista maksimissaan kolme.
+      var naytettavienAikojenLkm = (tapahtuma.times.length < 3) ? tapahtuma.times.length : 3;
+      for (var i = 0; i < naytettavienAikojenLkm; i++) {
+        var tapahtuma_aika = annaTapahtumaAika(tapahtuma, i);
+
+        if (tapahtuma_aika !== null) {
+          ajankohta.push(tapahtuma_aika);
+        }
+      }
     }
 
-    if (ajankohta.length > 0 && lkm > 0) {
+    if (ajankohta.length > 0) {
       lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta);
       tapahtumat.push(tapahtuma);
-      lkm--;
     }
 
   });
@@ -110,34 +105,18 @@ function naytaMarkeritKartalla(map, tapahtumat) {
           title: otsikko + ', ' + address,
         }));
         i++;
-      } else {
+      } /*else {
         alert('Geocode was not successful for the following reason: ' + status);
-      }
+      }*/
     });
   });
 }
 
-//Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
-function annaTapahtumaAika(tapahtuma, i) {
-  tapahtuma_aika = tapahtuma.times[i].start_datetime;
-
-  var nykyinenHetki = new Date();
-  var nykyHetkiMS = Date.parse(nykyinenHetki);
-  // Verrataan nykyhetkeä tapahtuma-aikaan. Jos tapahtuma ei ole vielä mennyt,
-  // palautetaan tapahtuman times-olio, jossa on sekä alku- että loppuaika.
-  // Jos tapahtuma on jo mennyt, palautetaan null.
-  if (nykyHetkiMS < tapahtuma_aika) {
-    return tapahtuma.times[i];
-  } else {
-    return null;
-  }
-}
-
-// Metodi lisää tapahtuman tiedot sivulle.
+// Lisätään tapahtuman tiedot sivulle.
 function lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta) {
   var tapahtumaElementti = $('#tapahtuma').clone();
-  tapahtumaElementti.find('h2').html(otsikko + ' <small>' + osoite +
-    ((paikkakunta === null) ? '' : ', ' + paikkakunta) + '</small>');
+  tapahtumaElementti.find('h2').html(otsikko + ' <small>' + ((osoite === null) ? '' : osoite + ', ') +
+    ((paikkakunta === null) ? 'Tampere' : paikkakunta) + '</small>');
   tapahtumaElementti.find('.kuvaus').text(kuvaus);
   tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" alt="' + kuva_alt + '" />');
   tapahtumaElementti.find('.info').html('<a href="' + info + '" target="_blank">' + info + '</a>');
