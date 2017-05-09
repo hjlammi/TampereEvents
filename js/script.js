@@ -2,7 +2,7 @@
 var lkm = 10;
 
 // Haetaan tiedot.
-(function() {
+$('button').on('click', function(){
   $.ajax({
     type: 'GET',
     dataType: 'json',
@@ -12,12 +12,15 @@ var lkm = 10;
       alert( "Tiedon noutaminen ei onnistunut" );
     }
   });
-}());
+});
+
+// Piirretään kartta ilman markereita.
+$(document).ready(function() {
+  initMap();
+});
 
 function init(data) {
   var tapahtumat = naytaTiedot(data);
-  // Piirretään kartta ilman markereita.
-  initMap();
 
   naytaMarkeritKartalla(map, tapahtumat);
 }
@@ -77,7 +80,7 @@ function naytaTiedot(data) {
 function initMap() {
   var tampere = {lat: 61.507756, lng: 23.760240};
   map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
+          zoom: 9,
           center: tampere
         });
 }
@@ -99,7 +102,7 @@ function naytaMarkeritKartalla(map, tapahtumat) {
         markerclusterer.addMarker(new google.maps.Marker({
           position: {lat: lat, lng: lng},
           title: otsikko + ', ' + address,
-        }), true);
+        }));
         i++;
       } else {
         alert('Geocode was not successful for the following reason: ' + status);
