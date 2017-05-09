@@ -80,3 +80,54 @@ describe("annaAlkuJaLoppuaika", function() {
     expect(annaAlkuJaLoppuaika(tapahtuma)).toBe(null);
   });
 });
+
+describe("annaMaxKolmeTapahtumaa", function() {
+
+  it("returns an array of one object if there is only one object", function() {
+    var ajat = [
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")
+      }
+    ]
+
+    expect(annaMaxKolmeTapahtumaa(ajat)).toEqual([{
+      start_datetime: Date.parse("2018-01-01T00:00:00"),
+      end_datetime: Date.parse("2018-01-02T00:00:00")}]);
+  });
+
+  it("returns an array of three objects if there are four objects", function() {
+    var ajat = [
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")
+      },
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")
+      },
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")
+      },
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")
+      }
+    ]
+
+    expect(annaMaxKolmeTapahtumaa(ajat)).toEqual([
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")
+      },
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")
+      },
+      {
+        start_datetime: Date.parse("2018-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-01-02T00:00:00")}]);
+  });
+
+});

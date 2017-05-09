@@ -44,3 +44,12 @@ function annaAlkuJaLoppuaika(tapahtuma) {
     return null;
   }
 }
+
+function annaMaxKolmeTapahtumaa(tapahtumanAjat) {
+  var ajat = [];
+  $.each(tapahtumanAjat, function(i){
+    ajat.push(tapahtumanAjat[i]);
+    return (i < 2);
+  });
+  return ajat;
+}

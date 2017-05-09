@@ -2,11 +2,11 @@
 // Haetaan tiedot.
 $('button').on('click', function(){
   var start_datetime = Date.parse(new Date());
-  // var end_datetime = Date.parse(new Date()) + 14*24*60*60*1000;
+  var end_datetime = Date.parse(new Date()) + 14*24*60*60*1000;
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: "https://visittampere.fi/api/search?type=event&limit=10&start_datetime=" + start_datetime /*+ "&end_datetime=" + end_datetime*/,
+    url: "https://visittampere.fi/api/search?type=event&limit=10&start_datetime=" + start_datetime + "&end_datetime=" + end_datetime,
     success: init,
     headers: {
       "Accept-Language": ''
@@ -48,18 +48,9 @@ function naytaTiedot(data) {
     } else {
       // Kutsutaan metodia, joka palauttaa taulukossa tapahtuman tulevat ajat.
       var tapahtumanTulevatAjat = annaVainTulevatAjat(tapahtuma);
+      console.log(tapahtumanTulevatAjat);
       // Näytetään tapahtuman ajoista maksimissaan kolme.
-      // var naytettavienAikojenLkm = (tapahtumanTulevatAjat.length < 3) ? tapahtumanTulevatAjat.length : 3;
-      $.each(tapahtumanTulevatAjat, function(i){
-        ajat.push(tapahtumanTulevatAjat[i]);
-        return (i < 2);
-      });
-      /*for (var i = 0; i < naytettavienAikojenLkm; i++) {
-        var tapahtuma_aika = annaTapahtumaAika(tapahtuma, i);
-
-        if (tapahtuma_aika !== null) {
-        }
-      }*/
+      ajat = annaMaxKolmeTapahtumaa(tapahtumanTulevatAjat);
     }
 
     if (ajat.length > 0) {
