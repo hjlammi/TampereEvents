@@ -62,12 +62,21 @@ describe("annaAlkuJaLoppuaika", function() {
 
   it("returns start and end times", function() {
     var tapahtuma = {
+      start_datetime: Date.parse("2018-01-01T00:00:00"),
+      end_datetime: Date.parse("2018-01-02T00:00:00")
+    }
+
+    expect(annaAlkuJaLoppuaika(tapahtuma)).toEqual({
+      start_datetime: Date.parse("2018-01-01T00:00:00"),
+      end_datetime: Date.parse("2018-01-02T00:00:00")});
+  });
+
+  it("returns null if start time is in the past", function() {
+    var tapahtuma = {
       start_datetime: Date.parse("2010-01-01T00:00:00"),
       end_datetime: Date.parse("2010-01-02T00:00:00")
     }
 
-    expect(annaAlkuJaLoppuaika(tapahtuma)).toEqual({
-      start_datetime: Date.parse("2010-01-01T00:00:00"),
-      end_datetime: Date.parse("2010-01-02T00:00:00")});
+    expect(annaAlkuJaLoppuaika(tapahtuma)).toBe(null);
   });
 });

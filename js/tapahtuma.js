@@ -28,13 +28,19 @@ function annaVainTulevatAjat(tapahtuma) {
   return tulevatAjat;
 }
 
-// Metodi saa parametrina tapahtuman ja antaa paluuarvona tapahtuman alku ja loppuajan.
+// Metodi saa parametrina tapahtuman ja antaa paluuarvona tapahtuman alku ja loppuajan,
+// jos aika on vielä tulevaisuudessa.
 function annaAlkuJaLoppuaika(tapahtuma) {
+  var nykyHetkiMS = Date.parse(new Date());
   var alkuaika = tapahtuma.start_datetime;
   var loppuaika = tapahtuma.end_datetime;
-  var alkuJaLoppuaika = {
-    start_datetime: alkuaika,
-    end_datetime: loppuaika
-  };
-  return alkuJaLoppuaika;
+  if (nykyHetkiMS < alkuaika) {
+    var alkuJaLoppuaika = {
+      start_datetime: alkuaika,
+      end_datetime: loppuaika
+    };
+    return alkuJaLoppuaika;
+  } else {
+    return null;
+  }
 }
