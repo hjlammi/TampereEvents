@@ -6,7 +6,7 @@ $('button').on('click', function(){
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: "https://visittampere.fi/api/search?type=event&limit=10&start_datetime=" + start_datetime + "&end_datetime=" + end_datetime,
+    url: "https://visittampere.fi/api/search?type=event&limit=100&start_datetime=" + start_datetime + "&end_datetime=" + end_datetime,
     success: init,
     headers: {
       "Accept-Language": ''
@@ -31,7 +31,9 @@ function init(data) {
 function naytaTiedot(data) {
   var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajat;
   var tapahtumat = [];
-  $.each(data, function(index, tapahtuma) {
+  var lajitellutTapahtumat = lajitteleTapahtumat(data);
+  $.each(lajitellutTapahtumat, function(index, tapahtuma) {
+    console.log(tapahtuma);
     ajat = [];
     otsikko = tapahtuma.title;
     kuva = tapahtuma.image.src;
@@ -48,7 +50,6 @@ function naytaTiedot(data) {
     } else {
       // Kutsutaan metodia, joka palauttaa taulukossa tapahtuman tulevat ajat.
       var tapahtumanTulevatAjat = annaVainTulevatAjat(tapahtuma);
-      console.log(tapahtumanTulevatAjat);
       // Näytetään tapahtuman ajoista maksimissaan kolme.
       ajat = annaMaxKolmeTapahtumaa(tapahtumanTulevatAjat);
     }
