@@ -3,25 +3,29 @@ var lkm = 10;
 
 // Haetaan tiedot.
 $('button').on('click', function(){
+  var start_datetime = Date.parse(new Date());
+  var end_datetime = Date.parse(new Date()) + 7*24*60*60*1000;
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: "https://visittampere.fi/api/search?type=event&limit=100",
+    url: "https://visittampere.fi/api/search?type=event&start_datetime=" + start_datetime + "&end_datetime=" + end_datetime,
     success: init,
+    headers: {
+      "Accept-Language": ''
+    },
     error: function() {
       alert( "Tiedon noutaminen ei onnistunut" );
     }
   });
 });
 
-// Piirretään kartta ilman markereita.
 $(document).ready(function() {
+  // Piirretään kartta ilman markereita.
   initMap();
 });
 
 function init(data) {
   var tapahtumat = naytaTiedot(data);
-
   naytaMarkeritKartalla(map, tapahtumat);
 }
 
@@ -38,6 +42,8 @@ function naytaTiedot(data) {
     paikkakunta = tapahtuma.contact_info.city;
     osoite = tapahtuma.contact_info.address;
     info = tapahtuma.contact_info.link;
+
+    console.log(otsikko);
 
     if (tapahtuma.start_datetime === null) {
       if (tapahtuma.times.length === 0) {
