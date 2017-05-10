@@ -1,3 +1,4 @@
+
 var searchParameters = {type: 'event', limit: 100};
 
 $('.dropdown-toggle').dropdown();
@@ -30,8 +31,7 @@ function getData(searchParameters) {
 }
 $(document).ready(function() {
   searchParameters.start_datetime = Date.parse(new Date());
-  searchParameters.end_datetime = Date.parse(new Date());
-  console.log(searchParameters);
+  searchParameters.end_datetime = Date.parse(moment().endOf('day'));
   getData(searchParameters);
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();

@@ -26,7 +26,7 @@ function makeEvent(apiEvent) {
 }
 
 function isOccurrenceInThePast(occurrence) {
-  return occurrence.begins < Date.parse(new Date());
+  return occurrence.begins < moment().startOf('day');
 }
 
 function removePastOccurrences(occurrences) {
