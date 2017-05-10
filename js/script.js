@@ -1,13 +1,25 @@
+var searchParameters = {type: 'event', limit: 100};
+
+$('.dropdown-toggle').dropdown();
+$('.dropdown-menu li a').click(function(){
+  $('#dropdownMenu1').text($(this).text());
+});
+
 
 // Haetaan tiedot.
-$('button').on('click', function(){
-  var start_datetime = Date.parse(new Date());
-  var end_datetime = Date.parse(new Date()) + 14*24*60*60*1000;
+$('button[name="submit"]').on('click', function(){
+  // var start_datetime = Date.parse(new Date());
+  // var end_datetime = Date.parse(new Date()) + 14*24*60*60*1000;
+  getData(searchParameters);
+});
+
+function getData(searchParameters) {
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    url: "https://visittampere.fi/api/search?type=event&limit=100&start_datetime=" + start_datetime + "&end_datetime=" + end_datetime,
-    success: init,
+    data: searchParameters,
+    url: "https://visittampere.fi/api/search",
+    success: showResultsOnPage,
     headers: {
       "Accept-Language": ''
     },
@@ -15,16 +27,18 @@ $('button').on('click', function(){
       alert( "Tiedon noutaminen ei onnistunut" );
     }
   });
-});
-
-// Piirretään kartta ilman markereita, kun sivu on valmis.
+}
 $(document).ready(function() {
+  searchParameters.start_datetime = Date.parse(new Date());
+  searchParameters.end_datetime = Date.parse(new Date());
+  console.log(searchParameters);
+  getData(searchParameters);
+  // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
 });
 
-function init(apiData) {
+function showResultsOnPage(apiData) {
   var events = showEventsOnPage(apiData);
-  console.log(events);
   showEventsOnMap(map, events);
 }
 

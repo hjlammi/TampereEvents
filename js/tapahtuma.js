@@ -18,7 +18,7 @@ function makeEvent(apiEvent) {
 
   return {
     title: apiEvent.title,
-    image: {src: apiEvent.image.src, title: apiEvent.image.title},
+    image: (apiEvent.image === undefined) ? { src: "", title: ""} : {src:  apiEvent.image.src, title: apiEvent.image.title},
     description: apiEvent.description,
     contact_info: {city: apiEvent.contact_info.city, address: apiEvent.contact_info.address, link: apiEvent.contact_info.link},
     occurrences: removePastOccurrences(occurrences)
