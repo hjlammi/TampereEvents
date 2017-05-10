@@ -283,10 +283,97 @@ describe("removePastOccurrences", function() {
     var occurrences = [
       {begins: Date.parse("2016-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
       {begins: Date.parse("2017-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
-      {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
+      {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}
     ]
 
     expect(removePastOccurrences(occurrences)).toEqual([
-        {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]);
+      {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]);
+  });
+});
+
+describe("isEventInThePast", function() {
+
+  it("returns true if event is in the past", function() {
+    var event = {
+      title: "Lol",
+      occurrences : []
+    }
+
+    expect(isEventInThePast(event)).toBe(true);
+  });
+
+  it("returns false if event is in the future", function() {
+    var event = {
+      title: "Lol",
+      occurrences : [{begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
+    }
+
+    expect(isEventInThePast(event)).toBe(false);
+  });
+});
+
+describe("makeEvents", function() {
+
+  it("removes past events", function() {
+    var apiEvents = [{
+      title: "Lol",
+      times : [
+        {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2016-01-02T00:00:00")},
+        {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2017-01-02T00:00:00")},
+        {start_datetime: Date.parse("2017-02-01T00:00:00"), end_datetime: Date.parse("2017-02-02T00:00:00")}]
+    },
+      {
+      title: "Apua",
+      times : [
+        {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+        {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+        {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")}]
+    },
+    {
+      title: "Foo",
+      times : [
+        {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+        {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
+        {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
+    }]
+    expect(makeEvents(apiEvents)).toEqual([{
+      title: "Apua",
+      occurrences : [
+        {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
+    },
+    {
+      title: "Foo",
+      occurrences : [
+        {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
+        {begins: Date.parse("2019-01-01T00:00:00"), ends: Date.parse("2019-01-02T00:00:00")},
+        {begins: Date.parse("2020-01-01T00:00:00"), ends: Date.parse("2020-01-02T00:00:00")}]
+    }
+    ]);
+  });
+
+  it("sorts events by comparing the begins times of the first occurrences ", function() {
+    var apiEvents = [{
+      title: "Lol",
+      times : [
+        {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2016-01-02T00:00:00")},
+        {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2017-01-02T00:00:00")},
+        {start_datetime: Date.parse("2018-11-01T00:00:00"), end_datetime: Date.parse("2018-12-02T00:00:00")}]
+    },
+      {
+      title: "Apua",
+      times : [
+        {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+        {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+        {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")}]
+    },
+    {
+      title: "Foo",
+      times : [
+        {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
+        {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
+    }]
+    expect(Immutable.fromJS(makeEvents(apiEvents)).map(function(t){
+      return t.get("title");
+    }).toJS()).toEqual(["Apua", "Lol", "Foo"]);
   });
 });

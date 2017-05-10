@@ -36,6 +36,29 @@ function removePastOccurrences(occurrences) {
   return futureOccurrences;
 }
 
+// Metodi palauttaa true, jos event on menneisyydessä.
+function isEventInThePast(event){
+  return event.occurrences.length === 0;
+}
+
+// Metodi tekee rajapinnasta saatavista tapahtumista sellaisen events-listan, josta on
+// poistettu menneet tapahtuman ajankohdat ja järjestää jäljelle jääneet tulevaisuuden
+// tapahtumat aikajärjestykseen ensimmäisen ajankohdan mukaan, niin että se tapahtuma on
+// listalla ensimmäisenä, jonka ensimmäinen ajankohta on lähimpänä nykyhetkestä.
+function makeEvents(apiEvents) {
+  var events = [];
+  $.each(apiEvents, function(i, e) {
+    var event = makeEvent(e);
+    if (!isEventInThePast(event)) {
+      events.push(event);
+    }
+  });
+  console.log(events);
+  return events.sort(function(a, b) {
+    return a.occurrences[0].begins - b.occurrences[0].begins;
+  });
+}
+
 //Metodi saa parametrina tapahtuman ja antaa tapahtuman ajankohdan paluuarvona.
 function annaTapahtumaAika(tapahtuma, i) {
   tapahtuma_aika = tapahtuma.times[i].start_datetime;
