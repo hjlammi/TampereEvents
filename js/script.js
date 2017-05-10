@@ -22,16 +22,16 @@ $(document).ready(function() {
   initMap();
 });
 
-function init(data) {
-  var tapahtumat = naytaTiedot(data);
+function init(apiData) {
+  var tapahtumat = showEventsOnPage(apiData);
   naytaMarkeritKartalla(map, tapahtumat);
 }
 
 
-function naytaTiedot(data) {
+function showEventsOnPage(apiData) {
   var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajat;
   var tapahtumat = [];
-  var lajitellutTapahtumat = lajitteleTapahtumat(data);
+  var lajitellutTapahtumat = lajitteleTapahtumat(apiData);
   $.each(lajitellutTapahtumat, function(index, tapahtuma) {
     console.log(tapahtuma);
     ajat = [];

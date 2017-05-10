@@ -18,6 +18,9 @@ function makeEvent(apiEvent) {
 
   return {
     title: apiEvent.title,
+    image: {src: apiEvent.image.src, title: apiEvent.image.title},
+    description: apiEvent.description,
+    contact_info: {city: apiEvent.contact_info.city, address: apiEvent.contact_info.address, link: apiEvent.contact_info.link},
     occurrences: removePastOccurrences(occurrences)
   };
 }
@@ -53,7 +56,6 @@ function makeEvents(apiEvents) {
       events.push(event);
     }
   });
-  console.log(events);
   return events.sort(function(a, b) {
     return a.occurrences[0].begins - b.occurrences[0].begins;
   });

@@ -227,9 +227,12 @@ describe("lajitteleTapahtumat", function() {
 
 describe("makeEvent", function() {
 
-  it("returns only all the occurrences of an event", function() {
+  it("returns only all the future occurrences of an event", function() {
     var apiEvent = {
         title: "Lol",
+        image: {src: "www.lol.jpg", title: "lol.jpg"},
+        description: "Lol",
+        contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
         single_datetime: false,
         times: [
           {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
@@ -239,6 +242,9 @@ describe("makeEvent", function() {
 
     expect(makeEvent(apiEvent)).toEqual({
       title: "Lol",
+      image: {src: "www.lol.jpg", title: "lol.jpg"},
+      description: "Lol",
+      contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
       occurrences: [
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
     });
@@ -247,12 +253,18 @@ describe("makeEvent", function() {
   it("returns one occurrence of a single event", function() {
     var apiEvent = {
         title: "Lol",
+        image: {src: "www.lol.jpg", title: "lol.jpg"},
+        description: "Lol",
+        contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
         single_datetime: true,
         start_datetime: Date.parse("2018-01-01T00:00:00"),
         end_datetime: Date.parse("2018-01-02T00:00:00")}
 
     expect(makeEvent(apiEvent)).toEqual({
       title: "Lol",
+      image: {src: "www.lol.jpg", title: "lol.jpg"},
+      description: "Lol",
+      contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
       occurrences: [{begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
     });
   });
@@ -317,6 +329,9 @@ describe("makeEvents", function() {
   it("removes past events", function() {
     var apiEvents = [{
       title: "Lol",
+      image: {src: "www.lol.jpg", title: "lol.jpg"},
+      description: "Lol",
+      contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
       times : [
         {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2016-01-02T00:00:00")},
         {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2017-01-02T00:00:00")},
@@ -324,6 +339,9 @@ describe("makeEvents", function() {
     },
       {
       title: "Apua",
+      image: {src: "www.apua.jpg", title: "apua.jpg"},
+      description: "Apua",
+      contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
       times : [
         {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
         {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
@@ -331,6 +349,9 @@ describe("makeEvents", function() {
     },
     {
       title: "Foo",
+      image: {src: "www.foo.jpg", title: "foo.jpg"},
+      description: "Foo",
+      contact_info: {city: "Foocity", address: "Foostreet 1", link: "www.foo.com"},
       times : [
         {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
         {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
@@ -338,11 +359,17 @@ describe("makeEvents", function() {
     }]
     expect(makeEvents(apiEvents)).toEqual([{
       title: "Apua",
+      image: {src: "www.apua.jpg", title: "apua.jpg"},
+      description: "Apua",
+      contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
       occurrences : [
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
     },
     {
       title: "Foo",
+      image: {src: "www.foo.jpg", title: "foo.jpg"},
+      description: "Foo",
+      contact_info: {city: "Foocity", address: "Foostreet 1", link: "www.foo.com"},
       occurrences : [
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
         {begins: Date.parse("2019-01-01T00:00:00"), ends: Date.parse("2019-01-02T00:00:00")},
@@ -354,6 +381,8 @@ describe("makeEvents", function() {
   it("sorts events by comparing the begins times of the first occurrences ", function() {
     var apiEvents = [{
       title: "Lol",
+      image: {src: "www.lol.jpg", title: "lol.jpg"},
+      contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
       times : [
         {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2016-01-02T00:00:00")},
         {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2017-01-02T00:00:00")},
@@ -361,6 +390,8 @@ describe("makeEvents", function() {
     },
       {
       title: "Apua",
+      image: {src: "www.apua.jpg", title: "apua.jpg"},
+      contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
       times : [
         {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
         {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
@@ -368,6 +399,8 @@ describe("makeEvents", function() {
     },
     {
       title: "Foo",
+      image: {src: "www.foo.jpg", title: "foo.jpg"},
+      contact_info: {city: "Foocity", address: "Foostreet 1", link: "www.foo.com"},
       times : [
         {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
         {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
