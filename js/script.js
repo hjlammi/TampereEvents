@@ -17,109 +17,84 @@ $('button').on('click', function(){
   });
 });
 
+// Piirretään kartta ilman markereita, kun sivu on valmis.
 $(document).ready(function() {
-  // Piirretään kartta ilman markereita.
   initMap();
 });
 
 function init(apiData) {
-  var tapahtumat = showEventsOnPage(apiData);
-  naytaMarkeritKartalla(map, tapahtumat);
+  var events = showEventsOnPage(apiData);
+  console.log(events);
+  showEventsOnMap(map, events);
 }
 
 
 function showEventsOnPage(apiData) {
-  var otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajat;
-  var tapahtumat = [];
-  var lajitellutTapahtumat = lajitteleTapahtumat(apiData);
-  $.each(lajitellutTapahtumat, function(index, tapahtuma) {
-    console.log(tapahtuma);
-    ajat = [];
-    otsikko = tapahtuma.title;
-    kuva = tapahtuma.image.src;
-    kuva_alt = tapahtuma.image.alt;
-    kuvaus = tapahtuma.description;
-    paikkakunta = tapahtuma.contact_info.city;
-    osoite = tapahtuma.contact_info.address;
-    info = tapahtuma.contact_info.link;
-
-    // Jos tapahtuma on kertaluontoinen, otetaan talteen tapahtuman alku- ja loppuajat.
-    if (tapahtuma.single_datetime) {
-      ajat.push(annaAlkuJaLoppuaika(tapahtuma));
-    // Jos tapahtumalla on useita aikoja.
-    } else {
-      // Kutsutaan metodia, joka palauttaa taulukossa tapahtuman tulevat ajat.
-      var tapahtumanTulevatAjat = annaVainTulevatAjat(tapahtuma);
-      // Näytetään tapahtuman ajoista maksimissaan kolme.
-      ajat = annaMaxKolmeTapahtumaa(tapahtumanTulevatAjat);
-    }
-
-    if (ajat.length > 0) {
-      lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajat);
-      tapahtumat.push(tapahtuma);
-    }
-
+  var events = makeEvents(apiData);
+  var eventsOnPage = [];
+  $.each(events, function(i, event) {
+    addEventOnPage(event);
+    eventsOnPage.push(event);
   });
-  return tapahtumat;
+  return eventsOnPage;
 }
 
 /*
  * Apumetodit.
  */
 
-// Näytetään kartta.
+// Luodaan kartta, jonka keskipisteenä on Tampere.
 function initMap() {
   var tampere = {lat: 61.507756, lng: 23.760240};
   map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 9,
-          center: tampere
-        });
+    zoom: 9,
+    center: tampere
+  });
 }
 
-function naytaMarkeritKartalla(map, tapahtumat) {
+function showEventsOnMap(map, events) {
   geocoder = new google.maps.Geocoder();
-  var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   var markers = [];
   var i = 0;
   var markerclusterer = new MarkerClusterer(map, [],
     {imagePath: 'images/m'});
-  $.each(tapahtumat, function(index, tapahtuma){
-    var address = tapahtuma.contact_info.address + ', Tampere';
-    var otsikko = tapahtuma.title;
+  $.each(events, function(index, event){
+    var address = event.contact_info.address + ', ' + event.contact_info.city;
+    var title = event.title;
     geocoder.geocode({'address': address}, function(results, status) {
       if (status === 'OK') {
         var lat = results[0].geometry.location.lat();
         var lng = results[0].geometry.location.lng() + 0.00004 * i;
         markerclusterer.addMarker(new google.maps.Marker({
           position: {lat: lat, lng: lng},
-          title: otsikko + ', ' + address,
+          title: title + ', ' + address,
         }));
         i++;
-      } /*else {
-        alert('Geocode was not successful for the following reason: ' + status);
-      }*/
+      }
     });
   });
 }
 
 // Lisätään tapahtuman tiedot sivulle.
-function lisaaTapahtuma(otsikko, kuva, kuva_alt, kuvaus, paikkakunta, osoite, info, ajankohta) {
-  var tapahtumaElementti = $('#tapahtuma').clone();
-  tapahtumaElementti.find('h2').html(otsikko + ' <small>' + ((osoite === null) ? '' : osoite + ', ') +
-    ((paikkakunta === null) ? 'Tampere' : paikkakunta) + '</small>');
-  tapahtumaElementti.find('.kuvaus').text(kuvaus);
-  tapahtumaElementti.find('.kuva').html('<img src="' + kuva + '" alt="' + kuva_alt + '" />');
-  tapahtumaElementti.find('.info').html('<a href="' + info + '" target="_blank">' + info + '</a>');
+function addEventOnPage(event) {
+  var eventElement = $('#tapahtuma').clone();
+  eventElement.find('h2').html(event.title + ' <small>' + ((event.contact_info.address === null) ? '' : event.contact_info.address + ', ') +
+    ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city) + '</small>');
+  eventElement.find('.kuvaus').text(event.description);
+  eventElement.find('.kuva').html('<img src="' + event.image.src + '" alt="' + event.image.title + '" />');
+  eventElement.find('.info').html('<a href="' + event.contact_info.link + '" target="_blank">Lisätietoja</a>');
 
-  $.each(ajankohta, function(index, ajat) {
-    var alkamisaika = moment(ajat.start_datetime).format("D.M.YYYY");
-    var alkaaKlo = moment(ajat.start_datetime).format("k.mm");
-    var loppumisaika = moment(ajat.end_datetime).format("D.M.YYYY");
-    var loppuuKlo = moment(ajat.end_datetime).format("k.mm");
+  // Tapahtuman ajoista näytetään vain kolme ensimmäistä.
+  $.each(event.occurrences, function(i, o) {
+    var begins_date = moment(o.begins).format("D.M.YYYY");
+    var begins_time = moment(o.begins).format("k.mm");
+    var ends_date = moment(o.ends).format("D.M.YYYY");
+    var ends_time = moment(o.ends).format("k.mm");
 
-    tapahtumaElementti.find('.ajat ').append('<p>' + alkamisaika + ' at ' + alkaaKlo + ' &ndash; ' + loppumisaika + ' at ' + loppuuKlo + '</p>');
+    eventElement.find('.ajat ').append('<p>' + begins_date + ' at ' + begins_time + ' &ndash; ' + ends_date + ' at ' + ends_time + '</p>');
+    return (i < 2);
   });
 
-  tapahtumaElementti.removeAttr('id');
-  $('#tapahtumat').append(tapahtumaElementti);
+  eventElement.removeAttr('id');
+  $('#tapahtumat').append(eventElement);
 }
