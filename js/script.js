@@ -6,7 +6,7 @@ $('.dropdown-menu li a').click(function(){
 
 
 // Haetaan tiedot.
-$('button[name="submit"]').on('click', function(){
+$('button[type="button"]').on('click', function(){
   // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat.
   $('.tapahtuma:not(#tapahtuma)').remove();
   var searchParameters = {type: 'event', limit: 100};
@@ -29,9 +29,8 @@ function getData(searchParameters) {
   });
 }
 $(document).ready(function() {
-  var today = moment().format('D.M.YYYY');
-  // var today = moment().format();
-  console.log(today);
+  var today = moment().format();
+  var todayAsDate = moment().format('D.M.YYYY');
   $('input[name="date"]').daterangepicker({
     locale: {
       format: "D.M.YYYY",
@@ -58,22 +57,23 @@ $(document).ready(function() {
         'Marraskuu',
         'Joulukuu',
         ],
-        firstDay: 1
+      firstDay: 1
     },
-    startDate : today,
+    startDate: todayAsDate,
     singleDatePicker: true,
     showDropdowns: true,
-    minDate: today
+    minDate: todayAsDate
   });
   var searchParameters = {type: 'event', limit: 100};
-  searchParameters.start_datetime = Date.parse(new Date());
-  searchParameters.end_datetime = Date.parse(moment().endOf('day'));
+  searchParameters.start_datetime = Date.parse(today);
+  searchParameters.end_datetime = Date.parse(moment().endOf(today));
   getData(searchParameters);
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
 });
 
 function showResultsOnPage(apiData) {
+  initMap();
   var events = showEventsOnPage(apiData);
   showEventsOnMap(map, events);
 }
