@@ -69,14 +69,8 @@ $(document).ready(function() {
     showDropdowns: true,
     minDate: todayAsDate
   });
-  // Sivun latauduttua haetaan oletuksena kaikki saman päivän tapahtumat.
-  var searchParameters = {
-    type: 'event',
-    limit: 100,
-    start_datetime: Date.parse(today),
-    end_datetime: Date.parse(moment().endOf(today))
-  };
-  getData(searchParameters);
+  
+  getData(getSearchParameters());
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
 });
@@ -179,6 +173,8 @@ function getSearchParameters() {
       searchParameters.tag = 'sports';
     } else if (category === 'Festivaali') {
       searchParameters.tag = 'festival';
+    } else if (category == 'Teatteri') {
+      searchParameters.tag = 'theatre';
     }
   }
 
@@ -186,10 +182,14 @@ function getSearchParameters() {
     searchParameters.text = $('#search').val();
   }
 
+  if ($('#free').is(':checked')) {
+    searchParameters.free = true;
+  }
+
   var date = moment(($('#datepicker input').val()), 'DD.MM.YYYY').format('YYYY-MM-DD');
   searchParameters.start_datetime = moment(date).valueOf();
   // Oletuksena haetaan vain samana päivänä loppuvia tapahtumia.
-  searchParameters.end_datetime = Date.parse(moment(date).endOf('day'));
+  // searchParameters.end_datetime = Date.parse(moment(date).endOf('day'));
 
   return searchParameters;
 }
