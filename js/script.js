@@ -1,6 +1,4 @@
 
-var searchParameters = {type: 'event', limit: 100};
-
 $('.dropdown-toggle').dropdown();
 $('.dropdown-menu li a').click(function(){
   $('#dropdownMenu1').text($(this).text());
@@ -9,8 +7,9 @@ $('.dropdown-menu li a').click(function(){
 
 // Haetaan tiedot.
 $('button[name="submit"]').on('click', function(){
-  // var start_datetime = Date.parse(new Date());
-  // var end_datetime = Date.parse(new Date()) + 14*24*60*60*1000;
+  // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat.
+  $('.tapahtuma:not(#tapahtuma)').remove();
+  var searchParameters = {type: 'event', limit: 100};
   getData(searchParameters);
 });
 
@@ -30,6 +29,43 @@ function getData(searchParameters) {
   });
 }
 $(document).ready(function() {
+  var today = moment().format('D.M.YYYY');
+  // var today = moment().format();
+  console.log(today);
+  $('input[name="date"]').daterangepicker({
+    locale: {
+      format: "D.M.YYYY",
+      daysOfWeek: [
+       'Su',
+        'Ma',
+        'Ti',
+        'Ke',
+        'To',
+        'Pe',
+        'La',
+        ],
+      monthNames: [
+        'Tammikuu',
+        'Helmikuu',
+        'Maaliskuu',
+        'Huhtikuu',
+        'Toukokuu',
+        'Kesäkuu',
+        'Heinäkuu',
+        'Elokuu',
+        'Syyskuu',
+        'Lokakuu',
+        'Marraskuu',
+        'Joulukuu',
+        ],
+        firstDay: 1
+    },
+    startDate : today,
+    singleDatePicker: true,
+    showDropdowns: true,
+    minDate: today
+  });
+  var searchParameters = {type: 'event', limit: 100};
   searchParameters.start_datetime = Date.parse(new Date());
   searchParameters.end_datetime = Date.parse(moment().endOf('day'));
   getData(searchParameters);

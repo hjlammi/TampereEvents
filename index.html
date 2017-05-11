@@ -5,6 +5,7 @@
     <title>Tampereen tapahtumat</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
@@ -30,9 +31,9 @@
           <label class="control-label" for="search" placeholder="Haku"></label>
           <input class="form-control" id="search" type="text" placeholder="Haku"/>
         </div>
-        <div class="form-group"> <!-- Date input -->
-          <label class="control-label" for="date"></label>
-          <input class="form-control" id="date" name="date" placeholder="Alkamispäivämäärä" type="text"/>
+        <div id="datepicker" class="input-group">
+          <input type="text" class="form-control" name="date">
+          <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
         </div>
         <div class="checkbox">
           <label>
@@ -40,7 +41,7 @@
           </label>
         </div>
         <div class="form-group"> <!-- Submit button -->
-          <button class="btn btn-primary " name="submit">Submit</button>
+          <button class="btn btn-primary " name="submit">Hae tapahtumia</button>
         </div>
        </form>
        <!-- Form code ends -->
@@ -69,13 +70,13 @@
         </div>
       </div>
     </div>
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script> -->
     <script type="text/javascript" src="js/moment-with-locales.js"></script>
     <script src="js/markerclusterer.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEVPXU879OT_yIO2Pmy3TVtIFIL_LsMj0"></script>
     <script src="http://code.jquery.com/jquery-3.2.1.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/tapahtuma.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
+    <script type="text/javascript" src="js/tapahtuma.js"></script>
   </body>
 </html>
