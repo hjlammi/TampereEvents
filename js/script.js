@@ -65,11 +65,10 @@ $(document).ready(function() {
       firstDay: 1
     },
     startDate: todayAsDate,
-    singleDatePicker: true,
     showDropdowns: true,
     minDate: todayAsDate
   });
-  
+
   getData(getSearchParameters());
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
@@ -186,10 +185,10 @@ function getSearchParameters() {
     searchParameters.free = true;
   }
 
-  var date = moment(($('#datepicker input').val()), 'DD.MM.YYYY').format('YYYY-MM-DD');
-  searchParameters.start_datetime = moment(date).valueOf();
-  // Oletuksena haetaan vain samana päivänä loppuvia tapahtumia.
-  // searchParameters.end_datetime = Date.parse(moment(date).endOf('day'));
+  var picker = $('input[name="date"]').data('daterangepicker');
+
+  searchParameters.start_datetime = picker.startDate.valueOf();
+  searchParameters.end_datetime = picker.endDate.valueOf();
 
   return searchParameters;
 }
