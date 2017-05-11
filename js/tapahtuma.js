@@ -1,4 +1,4 @@
-function makeEvent(apiEvent) {
+function makeEvent(apiEvent, beginsAt) {
   var occurrences = [];
   if (apiEvent.times !== undefined && apiEvent.times.length > 0) {
     $.each(apiEvent.times, function(i, t){
@@ -21,18 +21,18 @@ function makeEvent(apiEvent) {
     image: (apiEvent.image === undefined) ? { src: "", title: ""} : {src:  apiEvent.image.src, title: apiEvent.image.title},
     description: apiEvent.description,
     contact_info: {city: apiEvent.contact_info.city, address: apiEvent.contact_info.address, link: apiEvent.contact_info.link},
-    occurrences: removePastOccurrences(occurrences)
+    occurrences: removePastOccurrences(occurrences, beginsAt)
   };
 }
 
-function isOccurrenceInThePast(occurrence) {
-  return occurrence.begins < moment().startOf('day');
+function isOccurrenceInThePast(occurrence, beginsAt) {
+  return occurrence.begins < beginsAt;
 }
 
-function removePastOccurrences(occurrences) {
+function removePastOccurrences(occurrences, beginsAt) {
   var futureOccurrences = [];
   $.each(occurrences, function(i, occurrence){
-    if (!isOccurrenceInThePast(occurrence)) {
+    if (!isOccurrenceInThePast(occurrence, beginsAt)) {
       futureOccurrences.push(occurrence);
     }
   });
@@ -48,10 +48,10 @@ function isEventInThePast(event){
 // poistettu menneet tapahtuman ajankohdat ja järjestää jäljelle jääneet tulevaisuuden
 // tapahtumat aikajärjestykseen ensimmäisen ajankohdan mukaan, niin että se tapahtuma on
 // listalla ensimmäisenä, jonka ensimmäinen ajankohta on lähimpänä nykyhetkestä.
-function makeEvents(apiEvents) {
+function makeEvents(apiEvents, beginsAt) {
   var events = [];
   $.each(apiEvents, function(i, e) {
-    var event = makeEvent(e);
+    var event = makeEvent(e, beginsAt);
     if (!isEventInThePast(event)) {
       events.push(event);
     }

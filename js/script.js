@@ -4,12 +4,14 @@ $('.dropdown-menu li a').click(function(){
   $('#dropdownMenu1').text($(this).text());
 });
 
-
 // Haetaan tiedot.
-$('button[type="button"]').on('click', function(){
+$('#submit').on('click', function(){
   // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat.
   $('.tapahtuma:not(#tapahtuma)').remove();
-  var searchParameters = {type: 'event', limit: 100};
+
+  // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
+  var searchParameters = getSearchParameters();
+  console.log(searchParameters);
   getData(searchParameters);
 });
 
@@ -19,7 +21,9 @@ function getData(searchParameters) {
     dataType: 'json',
     data: searchParameters,
     url: "https://visittampere.fi/api/search",
-    success: showResultsOnPage,
+    success: function(response){
+      showResultsOnPage(response, searchParameters.start_datetime);
+    },
     headers: {
       "Accept-Language": ''
     },
@@ -28,6 +32,7 @@ function getData(searchParameters) {
     }
   });
 }
+
 $(document).ready(function() {
   var today = moment().format();
   var todayAsDate = moment().format('D.M.YYYY');
@@ -64,23 +69,27 @@ $(document).ready(function() {
     showDropdowns: true,
     minDate: todayAsDate
   });
-  var searchParameters = {type: 'event', limit: 100};
-  searchParameters.start_datetime = Date.parse(today);
-  searchParameters.end_datetime = Date.parse(moment().endOf(today));
+  // Sivun latauduttua haetaan oletuksena kaikki saman päivän tapahtumat.
+  var searchParameters = {
+    type: 'event',
+    limit: 100,
+    start_datetime: Date.parse(today),
+    end_datetime: Date.parse(moment().endOf(today))
+  };
   getData(searchParameters);
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
 });
 
-function showResultsOnPage(apiData) {
+function showResultsOnPage(apiData, start_datetime) {
   initMap();
-  var events = showEventsOnPage(apiData);
+  var events = showEventsOnPage(apiData, start_datetime);
   showEventsOnMap(map, events);
 }
 
 
-function showEventsOnPage(apiData) {
-  var events = makeEvents(apiData);
+function showEventsOnPage(apiData, searchDate) {
+  var events = makeEvents(apiData, searchDate);
   var eventsOnPage = [];
   $.each(events, function(i, event) {
     addEventOnPage(event);
@@ -147,4 +156,40 @@ function addEventOnPage(event) {
 
   eventElement.removeAttr('id');
   $('#tapahtumat').append(eventElement);
+}
+
+function getSearchParameters() {
+  // Haetaan aina pelkkiä tapahtumia (event) ja asetetaan limitiksi 100, jotta saadaan
+  // kaikki tapahtumat eikä vain kymmentä satunnaista.
+  var searchParameters = {type: 'event', limit: 100};
+
+
+  var category = $('#dropdownMenu1').text();
+  console.log(category);
+  if (category !== 'Kategoria' || category !== Kaikki) {
+    if (category === 'Musiikki') {
+      searchParameters.tag = 'music';
+    } else if (category === 'Lapsille') {
+      searchParameters.tag = 'for-children';
+    } else if (category === 'Taide') {
+      searchParameters.tag = 'visual-art';
+    } else if (category === 'Tanssi') {
+      searchParameters.tag = 'dance';
+    } else if (category === 'Urheilu') {
+      searchParameters.tag = 'sports';
+    } else if (category === 'Festivaali') {
+      searchParameters.tag = 'festival';
+    }
+  }
+
+  if ($('#search').val() !== '') {
+    searchParameters.text = $('#search').val();
+  }
+
+  var date = moment(($('#datepicker input').val()), 'DD.MM.YYYY').format('YYYY-MM-DD');
+  searchParameters.start_datetime = moment(date).valueOf();
+  // Oletuksena haetaan vain samana päivänä loppuvia tapahtumia.
+  searchParameters.end_datetime = Date.parse(moment(date).endOf('day'));
+
+  return searchParameters;
 }

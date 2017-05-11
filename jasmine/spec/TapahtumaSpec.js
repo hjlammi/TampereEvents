@@ -12,14 +12,19 @@ describe("makeEvent", function() {
           {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
           {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
           {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+          {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
         ]}
 
-    expect(makeEvent(apiEvent)).toEqual({
+    var begins = Date.parse("2017-01-01T00:00:00");
+
+    expect(makeEvent(apiEvent, begins)).toEqual({
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
       description: "Lol",
       contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
       occurrences: [
+        {begins: Date.parse("2017-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
+        {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
     });
   });
@@ -51,7 +56,9 @@ describe("isOccurrenceInThePast", function() {
       begins: Date.parse("2017-01-01T00:00:00"),
       ends: Date.parse("2017-01-02T00:00:00")}
 
-    expect(isOccurrenceInThePast(occurrence)).toBe(true);
+    var begins = Date.parse("2017-02-02T00:00:00");
+
+    expect(isOccurrenceInThePast(occurrence, begins)).toBe(true);
   });
 
   it("returns false when the occurrence begins in the future", function() {
@@ -59,7 +66,9 @@ describe("isOccurrenceInThePast", function() {
       begins: Date.parse("2018-01-01T00:00:00"),
       ends: Date.parse("2018-01-02T00:00:00")}
 
-    expect(isOccurrenceInThePast(occurrence)).toBe(false);
+    var begins = Date.parse("2017-01-01T00:00:00");
+
+    expect(isOccurrenceInThePast(occurrence, begins)).toBe(false);
   });
 });
 
@@ -72,7 +81,10 @@ describe("removePastOccurrences", function() {
       {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}
     ]
 
-    expect(removePastOccurrences(occurrences)).toEqual([
+    var begins = Date.parse("2017-01-01T00:00:00");
+
+    expect(removePastOccurrences(occurrences, begins)).toEqual([
+      {begins: Date.parse("2017-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
       {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]);
   });
 });
@@ -101,6 +113,7 @@ describe("isEventInThePast", function() {
 describe("makeEvents", function() {
 
   it("removes past events", function() {
+    var begins = Date.parse("2017-11-11T00:00:00");
     var apiEvents = [{
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
@@ -118,7 +131,7 @@ describe("makeEvents", function() {
       contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
       times : [
         {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
-        {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
+        {start_datetime: Date.parse("2017-12-12T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
         {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")}]
     },
     {
@@ -131,12 +144,13 @@ describe("makeEvents", function() {
         {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
         {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
     }]
-    expect(makeEvents(apiEvents)).toEqual([{
+    expect(makeEvents(apiEvents, begins)).toEqual([{
       title: "Apua",
       image: {src: "www.apua.jpg", title: "apua.jpg"},
       description: "Apua",
       contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
       occurrences : [
+        {begins: Date.parse("2017-12-12T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
     },
     {
