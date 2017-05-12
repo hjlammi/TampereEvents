@@ -14,6 +14,19 @@ $('#submit').on('click', function(){
   getData(searchParameters);
 });
 
+// Tyhjennetään hakukentät.
+$('#clear').on('click', function(){
+  $('#dropdownMenu1').text('Kategoria');
+  $('#dropdownMenu1').append('<span class="caret"></span>');
+  $('#search').val('');
+  var picker1 = $('#datepicker1').data('daterangepicker');
+  var picker2 = $('#datepicker2').data('daterangepicker');
+  picker1.setStartDate(moment().format('D.M.YYYY'));
+  picker2.setStartDate(picker1.startDate);
+  $(picker2).attr('minDate', picker1.startDate);
+  $('#checkbox').attr('checked', 'false');
+});
+
 function getData(searchParameters) {
   $.ajax({
     type: 'GET',
@@ -72,6 +85,7 @@ $(document).ready(function() {
     var picker1 = $('#datepicker1').data('daterangepicker');
     var picker2 = $('#datepicker2').data('daterangepicker');
     picker2.setStartDate(picker1.startDate);
+    picker2.setEndDate(picker1.startDate);
     $(picker2).attr('minDate', picker1.startDate);
   });
 
@@ -106,7 +120,6 @@ $(document).ready(function() {
     },
     singleDatePicker: true,
     showDropdowns: true,
-    // minDate: $('datepicker1').data('daterangepicker')
   });
 
   getData(getSearchParameters());
@@ -115,6 +128,7 @@ $(document).ready(function() {
 });
 
 function showResultsOnPage(apiData, start_datetime) {
+  console.log(apiData);
   initMap();
   var events = showEventsOnPage(apiData, start_datetime);
   showEventsOnMap(map, events);
@@ -179,9 +193,9 @@ function addEventOnPage(event) {
   // Tapahtuman ajoista näytetään vain kolme ensimmäistä.
   $.each(event.occurrences, function(i, o) {
     var begins_date = moment(o.begins).format("D.M.YYYY");
-    var begins_time = moment(o.begins).format("k.mm");
+    var begins_time = moment(o.begins).format("H.mm");
     var ends_date = moment(o.ends).format("D.M.YYYY");
-    var ends_time = moment(o.ends).format("k.mm");
+    var ends_time = moment(o.ends).format("H.mm");
 
     eventElement.find('.ajat ').append('<p>' + begins_date + ' at ' + begins_time + ' &ndash; ' + ends_date + ' at ' + ends_time + '</p>');
     return (i < 2);
@@ -230,5 +244,11 @@ function getSearchParameters() {
   var picker2 = $('#datepicker2').data('daterangepicker');
   searchParameters.end_datetime = moment(picker2.startDate).endOf('day').valueOf();
 
+  console.log(searchParameters);
+
   return searchParameters;
+}
+
+function resetSearchParameters(){
+
 }
