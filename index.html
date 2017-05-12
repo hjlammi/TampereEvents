@@ -15,6 +15,10 @@
     <div class="col-md-12">
       <!-- Form code begins -->
       <form class="form-inline">
+        <div class="input-group">
+          <input id="datepicker1" type="text" class="form-control" name="date">
+          <span id="calendar" class="glyphicon glyphicon-calendar form-control-feedback"></span>
+        </div>
         <div class="form-group dropdown">
           <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             Kategoria
@@ -35,14 +39,6 @@
           <label class="control-label" for="search" placeholder="Haku"></label>
           <input class="form-control" id="search" type="text" placeholder="Kirjoita hakusana"/>
         </div>
-        <div class="input-group">
-          <input id="datepicker1" type="text" class="form-control" name="date">
-          <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
-        </div>
-        <div class="input-group">
-          <input id="datepicker2" type="text" class="form-control" name="date">
-          <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
-        </div>
         <div class="checkbox">
           <label>
             <input id="free" type="checkbox">Maksuton
@@ -57,7 +53,7 @@
     </div>
   </div>
       <div class="row">
-        <div class="col-md-8" id="tapahtumat">
+        <div class="col-md-7" id="tapahtumat">
           <div class="tapahtuma" id="tapahtuma">
             <div class="row">
               <h2 class="col-md-12">Otsikko</h2>
@@ -73,7 +69,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 map-container">
+        <div class="col-md-5 map-container">
           <h4>Tapahtumat kartalla:</h4>
           <div id="map">Kartta</div>
         </div>

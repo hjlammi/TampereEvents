@@ -19,11 +19,9 @@ $('#clear').on('click', function(){
   $('#dropdownMenu1').text('Kategoria');
   $('#dropdownMenu1').append('<span class="caret"></span>');
   $('#search').val('');
-  var picker1 = $('#datepicker1').data('daterangepicker');
-  var picker2 = $('#datepicker2').data('daterangepicker');
-  picker1.setStartDate(moment().format('D.M.YYYY'));
-  picker2.setStartDate(picker1.startDate);
-  $(picker2).attr('minDate', picker1.startDate);
+  var picker = $('#datepicker1').data('daterangepicker');
+  picker.setStartDate(moment().format('D.M.YYYY'));
+  picker.setEndDate(moment().format('D.M.YYYY'));
   $('#checkbox').attr('checked', 'false');
 });
 
@@ -78,48 +76,10 @@ $(document).ready(function() {
       firstDay: 1
     },
     startDate: todayAsDate,
-    singleDatePicker: true,
     showDropdowns: true,
-    minDate: todayAsDate
-  }).change(function(){
-    var picker1 = $('#datepicker1').data('daterangepicker');
-    var picker2 = $('#datepicker2').data('daterangepicker');
-    picker2.setStartDate(picker1.startDate);
-    picker2.setEndDate(picker1.startDate);
-    $(picker2).attr('minDate', picker1.startDate);
-  });
-
-  // Kalenteri loppumispäivän valintaan.
-  $('#datepicker2').daterangepicker({
-    locale: {
-      format: "D.M.YYYY",
-      daysOfWeek: [
-       'Su',
-        'Ma',
-        'Ti',
-        'Ke',
-        'To',
-        'Pe',
-        'La',
-        ],
-      monthNames: [
-        'Tammikuu',
-        'Helmikuu',
-        'Maaliskuu',
-        'Huhtikuu',
-        'Toukokuu',
-        'Kesäkuu',
-        'Heinäkuu',
-        'Elokuu',
-        'Syyskuu',
-        'Lokakuu',
-        'Marraskuu',
-        'Joulukuu',
-        ],
-      firstDay: 1
-    },
-    singleDatePicker: true,
-    showDropdowns: true,
+    minDate: todayAsDate,
+    opens: 'right',
+    autoApply: true
   });
 
   getData(getSearchParameters());
@@ -136,8 +96,8 @@ function showResultsOnPage(apiData, start_datetime) {
 
 
 function showEventsOnPage(apiData, searchBeginDate) {
-  var picker2 = $('#datepicker2').data('daterangepicker');
-  var searchEndDate = moment(picker2.startDate).endOf('day').valueOf();
+  var picker = $('#datepicker1').data('daterangepicker');
+  var searchEndDate = moment(picker.endDate).endOf('day').valueOf();
   var events = makeEvents(apiData, searchBeginDate, searchEndDate);
   var eventsOnPage = [];
   $.each(events, function(i, event) {
@@ -249,8 +209,4 @@ function getSearchParameters() {
   console.log(searchParameters);
 
   return searchParameters;
-}
-
-function resetSearchParameters(){
-
 }
