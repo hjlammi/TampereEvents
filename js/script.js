@@ -11,7 +11,6 @@ $('#submit').on('click', function(){
 
   // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
   var searchParameters = getSearchParameters();
-  console.log(searchParameters);
   getData(searchParameters);
 });
 
@@ -36,7 +35,8 @@ function getData(searchParameters) {
 $(document).ready(function() {
   var today = moment().format();
   var todayAsDate = moment().format('D.M.YYYY');
-  $('input[name="date"]').daterangepicker({
+  // Kalenteri alkamispäivän valintaan.
+  $('#datepicker1').daterangepicker({
     locale: {
       format: "D.M.YYYY",
       daysOfWeek: [
@@ -65,8 +65,48 @@ $(document).ready(function() {
       firstDay: 1
     },
     startDate: todayAsDate,
+    singleDatePicker: true,
     showDropdowns: true,
     minDate: todayAsDate
+  }).change(function(){
+    var picker1 = $('#datepicker1').data('daterangepicker');
+    var picker2 = $('#datepicker2').data('daterangepicker');
+    picker2.setStartDate(picker1.startDate);
+    $(picker2).attr('minDate', picker1.startDate);
+  });
+
+  // Kalenteri loppumispäivän valintaan.
+  $('#datepicker2').daterangepicker({
+    locale: {
+      format: "D.M.YYYY",
+      daysOfWeek: [
+       'Su',
+        'Ma',
+        'Ti',
+        'Ke',
+        'To',
+        'Pe',
+        'La',
+        ],
+      monthNames: [
+        'Tammikuu',
+        'Helmikuu',
+        'Maaliskuu',
+        'Huhtikuu',
+        'Toukokuu',
+        'Kesäkuu',
+        'Heinäkuu',
+        'Elokuu',
+        'Syyskuu',
+        'Lokakuu',
+        'Marraskuu',
+        'Joulukuu',
+        ],
+      firstDay: 1
+    },
+    singleDatePicker: true,
+    showDropdowns: true,
+    // minDate: $('datepicker1').data('daterangepicker')
   });
 
   getData(getSearchParameters());
@@ -158,7 +198,6 @@ function getSearchParameters() {
 
 
   var category = $('#dropdownMenu1').text();
-  console.log(category);
   if (category !== 'Kategoria' || category !== Kaikki) {
     if (category === 'Musiikki') {
       searchParameters.tag = 'music';
@@ -185,10 +224,11 @@ function getSearchParameters() {
     searchParameters.free = true;
   }
 
-  var picker = $('input[name="date"]').data('daterangepicker');
+  var picker1 = $('#datepicker1').data('daterangepicker');
+  searchParameters.start_datetime = picker1.startDate.valueOf();
 
-  searchParameters.start_datetime = picker.startDate.valueOf();
-  searchParameters.end_datetime = picker.endDate.valueOf();
+  var picker2 = $('#datepicker2').data('daterangepicker');
+  searchParameters.end_datetime = moment(picker2.startDate).endOf('day').valueOf();
 
   return searchParameters;
 }
