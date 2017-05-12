@@ -88,7 +88,6 @@ $(document).ready(function() {
 });
 
 function showResultsOnPage(apiData, start_datetime) {
-  console.log(apiData);
   initMap();
   var events = showEventsOnPage(apiData, start_datetime);
   showEventsOnMap(map, events);
@@ -99,12 +98,7 @@ function showEventsOnPage(apiData, searchBeginDate) {
   var picker = $('#datepicker1').data('daterangepicker');
   var searchEndDate = moment(picker.endDate).endOf('day').valueOf();
   var events = makeEvents(apiData, searchBeginDate, searchEndDate);
-  var eventsOnPage = [];
-  $.each(events, function(i, event) {
-    addEventOnPage(event);
-    eventsOnPage.push(event);
-  });
-  return eventsOnPage;
+  addEventsOnPage(events);
 }
 
 /*
@@ -141,6 +135,23 @@ function showEventsOnMap(map, events) {
       }
     });
   });
+}
+
+function addEventsOnPage(events) {
+  var eventsOnPage = [];
+  if (events.length === 0) {
+    errorMessage();
+  } else {
+    $.each(events, function(i, event) {
+      addEventOnPage(event);
+      eventsOnPage.push(event);
+    });
+  }
+  return eventsOnPage;
+}
+
+function errorMessage() {
+  $('#tapahtuma').after('<div class="row><div class=col-md-12 alert alert-info" role="alert">Hakuehtoja vastaavia tapahtumia ei löytynyt. Yritä uudelleen.</div></div>');
 }
 
 // Lisätään tapahtuman tiedot sivulle.
@@ -202,11 +213,6 @@ function getSearchParameters() {
 
   var picker1 = $('#datepicker1').data('daterangepicker');
   searchParameters.start_datetime = picker1.startDate.valueOf();
-
-  // var picker2 = $('#datepicker2').data('daterangepicker');
-  // searchParameters.end_datetime = moment(picker2.startDate).endOf('day').valueOf();
-
-  console.log(searchParameters);
 
   return searchParameters;
 }
