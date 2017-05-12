@@ -48,15 +48,25 @@ function isEventInThePast(event){
 // poistettu menneet tapahtuman ajankohdat ja järjestää jäljelle jääneet tulevaisuuden
 // tapahtumat aikajärjestykseen ensimmäisen ajankohdan mukaan, niin että se tapahtuma on
 // listalla ensimmäisenä, jonka ensimmäinen ajankohta on lähimpänä nykyhetkestä.
-function makeEvents(apiEvents, beginsAt) {
+function makeEvents(apiEvents, beginsAt, lastBeginsAt) {
   var events = [];
   $.each(apiEvents, function(i, e) {
     var event = makeEvent(e, beginsAt);
     if (!isEventInThePast(event)) {
-      events.push(event);
+      if (event.occurrences[0].begins <= lastBeginsAt) {
+        events.push(event);
+      }
     }
   });
   return events.sort(function(a, b) {
     return a.occurrences[0].begins - b.occurrences[0].begins;
   });
+}
+
+function isLastDateSameAsBeginsDate(event, lastBeginsAt) {
+  if (event.occurrences[0].begins <= lastBeginsAt) {
+    return true;
+  } else {
+    return false;
+  }
 }

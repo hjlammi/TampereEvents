@@ -114,6 +114,7 @@ describe("makeEvents", function() {
 
   it("removes past events", function() {
     var begins = Date.parse("2017-11-11T00:00:00");
+    var lastBegins = Date.parse("2018-11-11T00:00:00");
     var apiEvents = [{
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
@@ -130,9 +131,7 @@ describe("makeEvents", function() {
       description: "Apua",
       contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
       times : [
-        {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
-        {start_datetime: Date.parse("2017-12-12T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
-        {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")}]
+        {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-13T00:00:00")}]
     },
     {
       title: "Foo",
@@ -144,14 +143,13 @@ describe("makeEvents", function() {
         {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
         {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
     }]
-    expect(makeEvents(apiEvents, begins)).toEqual([{
+    expect(makeEvents(apiEvents, begins, lastBegins)).toEqual([{
       title: "Apua",
       image: {src: "www.apua.jpg", title: "apua.jpg"},
       description: "Apua",
       contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
       occurrences : [
-        {begins: Date.parse("2017-12-12T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
-        {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
+        {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-13T00:00:00")}]
     },
     {
       title: "Foo",
@@ -167,6 +165,8 @@ describe("makeEvents", function() {
   });
 
   it("sorts events by comparing the begins times of the first occurrences ", function() {
+    var begins = Date.parse("2017-11-11T00:00:00");
+    var lastBegins = Date.parse("2018-11-01T00:00:00");
     var apiEvents = [{
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
@@ -193,8 +193,31 @@ describe("makeEvents", function() {
         {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
         {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
     }]
-    expect(Immutable.fromJS(makeEvents(apiEvents)).map(function(t){
+    expect(Immutable.fromJS(makeEvents(apiEvents, begins, lastBegins)).map(function(t){
       return t.get("title");
-    }).toJS()).toEqual(["Apua", "Lol", "Foo"]);
+    }).toJS()).toEqual(["Apua", "Lol"]);
+  });
+});
+
+describe("isLastDateSameAsBeginsDate", function() {
+
+  it("returns true if event begins in the same day that is the last day of the search", function() {
+    var lastDate = Date.parse("2020-01-01T00:00:00");
+    var event = {
+      title: "Lol",
+      occurrences : [{begins: Date.parse("2020-01-01T00:00:00"), ends: Date.parse("2020-01-11T00:00:00")}]
+    }
+
+    expect(isLastDateSameAsBeginsDate(event, lastDate)).toBe(true);
+  });
+
+  it("returns false if event begins in the same day that is the last day of the search", function() {
+    var lastDate = Date.parse("2020-01-01T00:00:00");
+    var event = {
+      title: "Lol",
+      occurrences : [{begins: Date.parse("2021-01-01T00:00:00"), ends: Date.parse("2021-01-11T00:00:00")}]
+    }
+
+    expect(isLastDateSameAsBeginsDate(event, lastDate)).toBe(false);
   });
 });

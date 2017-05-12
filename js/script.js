@@ -135,8 +135,10 @@ function showResultsOnPage(apiData, start_datetime) {
 }
 
 
-function showEventsOnPage(apiData, searchDate) {
-  var events = makeEvents(apiData, searchDate);
+function showEventsOnPage(apiData, searchBeginDate) {
+  var picker2 = $('#datepicker2').data('daterangepicker');
+  var searchEndDate = moment(picker2.startDate).endOf('day').valueOf();
+  var events = makeEvents(apiData, searchBeginDate, searchEndDate);
   var eventsOnPage = [];
   $.each(events, function(i, event) {
     addEventOnPage(event);
@@ -212,7 +214,7 @@ function getSearchParameters() {
 
 
   var category = $('#dropdownMenu1').text();
-  if (category !== 'Kategoria' || category !== Kaikki) {
+  if (category !== 'Kategoria' || category !== 'Kaikki') {
     if (category === 'Musiikki') {
       searchParameters.tag = 'music';
     } else if (category === 'Lapsille') {
@@ -241,8 +243,8 @@ function getSearchParameters() {
   var picker1 = $('#datepicker1').data('daterangepicker');
   searchParameters.start_datetime = picker1.startDate.valueOf();
 
-  var picker2 = $('#datepicker2').data('daterangepicker');
-  searchParameters.end_datetime = moment(picker2.startDate).endOf('day').valueOf();
+  // var picker2 = $('#datepicker2').data('daterangepicker');
+  // searchParameters.end_datetime = moment(picker2.startDate).endOf('day').valueOf();
 
   console.log(searchParameters);
 
