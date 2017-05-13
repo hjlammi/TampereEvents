@@ -1,30 +1,3 @@
-
-$('.dropdown-toggle').dropdown();
-$('.dropdown-menu li a').click(function(){
-  $('#dropdownMenu1').text($(this).text());
-});
-
-// Haetaan tiedot.
-$('#submit').on('click', function(){
-  // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat.
-  $('.tapahtuma:not(#tapahtuma)').remove();
-
-  // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
-  var searchParameters = getSearchParameters();
-  getData(searchParameters);
-});
-
-// Tyhjennetään hakukentät.
-$('#clear').on('click', function(){
-  $('#dropdownMenu1').text('Kategoria');
-  $('#dropdownMenu1').append('<span class="caret"></span>');
-  $('#search').val('');
-  var picker = $('#datepicker1').data('daterangepicker');
-  picker.setStartDate(moment().format('D.M.YYYY'));
-  picker.setEndDate(moment().format('D.M.YYYY'));
-  $('#checkbox').attr('checked', 'false');
-});
-
 function getData(searchParameters) {
   $.ajax({
     type: 'GET',
@@ -80,6 +53,33 @@ $(document).ready(function() {
     minDate: todayAsDate,
     opens: 'right',
     autoApply: true
+  });
+
+  $('.dropdown-toggle').dropdown();
+  $('.dropdown-menu li a').click(function(){
+    $('#dropdownMenu1').text($(this).text() + ' ');
+    $('#dropdownMenu1').append('<span class="caret"></span>');
+  });
+
+  // Haetaan tiedot.
+  $('#submit').on('click', function(){
+    // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat.
+    $('.tapahtuma:not(#tapahtuma)').remove();
+
+  // Tyhjennetään hakukentät.
+  $('#clear').on('click', function(){
+    $('#dropdownMenu1').text('Kategoria ');
+    $('#dropdownMenu1').append('<span class="caret"></span>');
+    $('#search').val('');
+    var picker = $('#datepicker1').data('daterangepicker');
+    picker.setStartDate(moment().format('D.M.YYYY'));
+    picker.setEndDate(moment().format('D.M.YYYY'));
+    $('#checkbox').attr('checked', 'false');
+  });
+
+    // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
+    var searchParameters = getSearchParameters();
+    getData(searchParameters);
   });
 
   getData(getSearchParameters());
@@ -185,7 +185,7 @@ function getSearchParameters() {
   var searchParameters = {type: 'event', limit: 100};
 
 
-  var category = $('#dropdownMenu1').text();
+  var category = $.trim($('#dropdownMenu1').text());
   if (category !== 'Kategoria' || category !== 'Kaikki') {
     if (category === 'Musiikki') {
       searchParameters.tag = 'music';
