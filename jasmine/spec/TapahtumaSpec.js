@@ -230,3 +230,63 @@ describe("isLastDateSameAsBeginsDate", function() {
     expect(isLastDateSameAsBeginsDate(event, lastDate)).toBe(false);
   });
 });
+
+describe("findEventWithId", function() {
+
+  it("returns the event that has the id", function() {
+    var events = [
+      {
+        event_id: 123,
+        title: "Lol"
+      },
+      {
+        event_id: 456,
+        title: "Apua"
+      },
+      {
+        event_id: 789,
+        title: "Foo"
+      }]
+    var id = 789;
+    expect(findEventWithId(id, events).title).toEqual("Foo");
+  });
+
+  it("returns the event that has the id", function() {
+    var events = [
+      {
+        event_id: 123,
+        title: "Lol"
+      },
+      {
+        event_id: 456,
+        title: "Apua"
+      },
+      {
+        event_id: 789,
+        title: "Foo"
+      }]
+    var id = 800;
+    expect(findEventWithId(id, events)).toEqual(undefined);
+  });
+});
+
+describe("findEventWithId", function() {
+
+  it("returns the event that has the id", function() {
+    var events = [
+      {
+        event_id: 123,
+        title: "Lol"
+      },
+      {
+        event_id: 456,
+        title: "Apua"
+      },
+      {
+        event_id: 789,
+        title: "Foo"
+      }]
+    var id = 789;
+    expect(findEventWithId(id, events).title).toEqual("Foo");
+  });
+});

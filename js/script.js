@@ -1,3 +1,5 @@
+var events;
+
 function getData(searchParameters) {
   $.ajax({
     type: 'GET',
@@ -85,12 +87,19 @@ $(document).ready(function() {
 
   // Lisätään tapahtuma suosikiksi.
   $('.tapahtuma button:first').on('click', function() {
+    var favorites = getFavorites();
+    var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
     $(this).toggleClass('favored');
     if ($(this).hasClass('favored')) {
       $(this).html('<span class="glyphicon glyphicon-heart"></span> Suosikki');
+      favorites.push(thisEventId);
     } else {
       $(this).text('Lisää suosikiksi');
+      _.remove(favorites, function(id) {
+        return id === thisEventId;
+      });
     }
+    setFavorites(favorites);
   });
 
   getData(getSearchParameters());
@@ -100,7 +109,7 @@ $(document).ready(function() {
 
 function showResultsOnPage(apiData, start_datetime) {
   initMap();
-  var events = showEventsOnPage(apiData, start_datetime);
+  events = showEventsOnPage(apiData, start_datetime);
   showEventsOnMap(map, events);
 }
 
@@ -181,9 +190,27 @@ function addEventOnPage(event) {
   });
 
   eventElement.removeAttr('id');
-  $('#tapahtumat').append(eventElement);
+  eventElement.attr('data-event_id', event.event_id);
 
-  eventElement.find('button:first').attr('id', event.event_id);
+  if (isFavorite(event.event_id)) {
+    eventElement.find('button:first').addClass('favored').html('<span class="glyphicon glyphicon-heart"></span> Suosikki');
+  }
+
+
+  $('#tapahtumat').append(eventElement);
+}
+
+function getFavorites() {
+  return JSON.parse(localStorage.getItem('favorites') || '[]');
+}
+
+function setFavorites(favorites) {
+  localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+function isFavorite(id) {
+  var favorites = getFavorites();
+  return _.includes(favorites, id);
 }
 
 function getSearchParameters() {

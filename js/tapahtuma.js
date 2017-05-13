@@ -71,3 +71,18 @@ function isLastDateSameAsBeginsDate(event, lastBeginsAt) {
     return false;
   }
 }
+
+function findEventWithId(id, events) {
+  var result;
+  $.each(events, function(i, event) {
+    if (event.event_id === id) {
+      result = event;
+      return false;
+    }
+  });
+  return result;
+}
+
+function findEventIndex(id, events) {
+
+}
