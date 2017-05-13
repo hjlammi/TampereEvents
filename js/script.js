@@ -108,7 +108,8 @@ function showEventsOnPage(apiData, searchBeginDate) {
   var picker = $('#datepicker1').data('daterangepicker');
   var searchEndDate = moment(picker.endDate).endOf('day').valueOf();
   var events = makeEvents(apiData, searchBeginDate, searchEndDate);
-  return addEventsOnPage(events);
+  addEventsOnPage(events);
+  return events;
 }
 
 // Luodaan kartta, jonka keskipisteenä on Tampere.
@@ -146,16 +147,13 @@ function showEventsOnMap(map, events) {
 }
 
 function addEventsOnPage(events) {
-  var eventsOnPage = [];
   if (events.length === 0) {
     errorMessage();
   } else {
     $.each(events, function(i, event) {
       addEventOnPage(event);
-      eventsOnPage.push(event);
     });
   }
-  return eventsOnPage;
 }
 
 function errorMessage() {
