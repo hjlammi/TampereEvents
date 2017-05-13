@@ -90,7 +90,6 @@ $(document).ready(function() {
 function showResultsOnPage(apiData, start_datetime) {
   initMap();
   var events = showEventsOnPage(apiData, start_datetime);
-  console.log(events);
   showEventsOnMap(map, events);
 }
 
@@ -149,7 +148,6 @@ function addEventsOnPage(events) {
       eventsOnPage.push(event);
     });
   }
-  // console.log(eventsOnPage);
   return eventsOnPage;
 }
 

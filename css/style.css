@@ -7,6 +7,15 @@ img {
   padding-bottom: 1em;
 }
 
+h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+h3 {
+  font-size: 20px;
+}
+
 /*.tapahtuma {
   border: solid 2px;
   border-radius: 12px;
