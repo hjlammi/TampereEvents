@@ -3,6 +3,7 @@ describe("makeEvent", function() {
 
   it("returns only all the future occurrences of an event", function() {
     var apiEvent = {
+        item_id: 123,
         title: "Lol",
         image: {src: "www.lol.jpg", title: "lol.jpg"},
         description: "Lol",
@@ -18,6 +19,7 @@ describe("makeEvent", function() {
     var begins = Date.parse("2017-01-01T00:00:00");
 
     expect(makeEvent(apiEvent, begins)).toEqual({
+      event_id: 123,
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
       description: "Lol",
@@ -31,6 +33,7 @@ describe("makeEvent", function() {
 
   it("returns one occurrence of a single event", function() {
     var apiEvent = {
+        item_id: 123,
         title: "Lol",
         image: {src: "www.lol.jpg", title: "lol.jpg"},
         description: "Lol",
@@ -40,6 +43,7 @@ describe("makeEvent", function() {
         end_datetime: Date.parse("2018-01-02T00:00:00")}
 
     expect(makeEvent(apiEvent)).toEqual({
+      event_id: 123,
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
       description: "Lol",
@@ -116,6 +120,7 @@ describe("makeEvents", function() {
     var begins = Date.parse("2017-11-11T00:00:00");
     var lastBegins = Date.parse("2018-11-11T00:00:00");
     var apiEvents = [{
+      item_id: 123,
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
       description: "Lol",
@@ -125,7 +130,8 @@ describe("makeEvents", function() {
         {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2017-01-02T00:00:00")},
         {start_datetime: Date.parse("2017-02-01T00:00:00"), end_datetime: Date.parse("2017-02-02T00:00:00")}]
     },
-      {
+    {
+      item_id: 456,
       title: "Apua",
       image: {src: "www.apua.jpg", title: "apua.jpg"},
       description: "Apua",
@@ -134,6 +140,7 @@ describe("makeEvents", function() {
         {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-13T00:00:00")}]
     },
     {
+      item_id: 789,
       title: "Foo",
       image: {src: "www.foo.jpg", title: "foo.jpg"},
       description: "Foo",
@@ -144,6 +151,7 @@ describe("makeEvents", function() {
         {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
     }]
     expect(makeEvents(apiEvents, begins, lastBegins)).toEqual([{
+      event_id: 456,
       title: "Apua",
       image: {src: "www.apua.jpg", title: "apua.jpg"},
       description: "Apua",
@@ -152,6 +160,7 @@ describe("makeEvents", function() {
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-13T00:00:00")}]
     },
     {
+      event_id: 789,
       title: "Foo",
       image: {src: "www.foo.jpg", title: "foo.jpg"},
       description: "Foo",

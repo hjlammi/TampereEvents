@@ -19,7 +19,7 @@ function getData(searchParameters) {
 $(document).ready(function() {
   var today = moment().format();
   var todayAsDate = moment().format('D.M.YYYY');
-  // Kalenteri alkamispäivän valintaan.
+  // Luodaan kalenteriolio.
   $('#datepicker1').daterangepicker({
     locale: {
       format: "D.M.YYYY",
@@ -55,6 +55,7 @@ $(document).ready(function() {
     autoApply: true
   });
 
+  // Pudotusvalikon tekstin päivittäminen.
   $('.dropdown-toggle').dropdown();
   $('.dropdown-menu li a').click(function(){
     $('#dropdownMenu1').text($(this).text() + ' ');
@@ -63,8 +64,13 @@ $(document).ready(function() {
 
   // Haetaan tiedot.
   $('#submit').on('click', function(){
-    // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat.
+    // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat ja virheilmoitus.
     $('.tapahtuma:not(#tapahtuma)').remove();
+    $('[role="alert"]').remove();
+    // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
+    var searchParameters = getSearchParameters();
+    getData(searchParameters);
+  });
 
   // Tyhjennetään hakukentät.
   $('#clear').on('click', function(){
@@ -77,9 +83,14 @@ $(document).ready(function() {
     $('#checkbox').attr('checked', 'false');
   });
 
-    // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
-    var searchParameters = getSearchParameters();
-    getData(searchParameters);
+  // Lisätään tapahtuma suosikiksi.
+  $('.tapahtuma button:first').on('click', function() {
+    $(this).toggleClass('favored');
+    if ($(this).hasClass('favored')) {
+      $(this).html('<span class="glyphicon glyphicon-heart"></span> Suosikki');
+    } else {
+      $(this).text('Lisää suosikiksi');
+    }
   });
 
   getData(getSearchParameters());
@@ -93,17 +104,12 @@ function showResultsOnPage(apiData, start_datetime) {
   showEventsOnMap(map, events);
 }
 
-
 function showEventsOnPage(apiData, searchBeginDate) {
   var picker = $('#datepicker1').data('daterangepicker');
   var searchEndDate = moment(picker.endDate).endOf('day').valueOf();
   var events = makeEvents(apiData, searchBeginDate, searchEndDate);
   return addEventsOnPage(events);
 }
-
-/*
- * Apumetodit.
- */
 
 // Luodaan kartta, jonka keskipisteenä on Tampere.
 function initMap() {
@@ -115,7 +121,6 @@ function initMap() {
 }
 
 function showEventsOnMap(map, events) {
-  // console.log(events);
   geocoder = new google.maps.Geocoder();
   var markers = [];
   var i = 0;
@@ -135,6 +140,8 @@ function showEventsOnMap(map, events) {
         i++;
       }
     });
+    // Näytetään max. 10 tapahtumaa kartalla.
+    return index < 9;
   });
 }
 
@@ -157,7 +164,7 @@ function errorMessage() {
 
 // Lisätään tapahtuman tiedot sivulle.
 function addEventOnPage(event) {
-  var eventElement = $('#tapahtuma').clone();
+  var eventElement = $('#tapahtuma').clone(true);
   eventElement.find('h2').html(event.title + ' <small>' + ((event.contact_info.address === null) ? '' : event.contact_info.address + ', ') +
     ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city) + '</small>');
   eventElement.find('.kuvaus').text(event.description);
@@ -177,6 +184,8 @@ function addEventOnPage(event) {
 
   eventElement.removeAttr('id');
   $('#tapahtumat').append(eventElement);
+
+  eventElement.find('button:first').attr('id', event.event_id);
 }
 
 function getSearchParameters() {

@@ -16,23 +16,31 @@ h3 {
   font-size: 20px;
 }
 
-/*.tapahtuma {
-  border: solid 2px;
-  border-radius: 12px;
-  border-color: lightgrey;
-  margin: 5px 0;
-  padding: 15px;
-}*/
-
 #map {
   height: 500px;
   width: auto;
 }
 
-/*.map-container {
-  border: solid 2px;
-  border-radius: 12px;
-  border-color: lightgrey;
-  margin: 5px 0;
-  padding: 15px;
-}*/
+.btn-default.favored:hover {
+  background-color: hotpink !important;
+}
+
+.btn-default.favored {
+  background-color: #f67cb9 !important;
+}
+
+.btn-default {
+  background-color: white !important;
+}
+
+.btn-default:hover {
+  background-color: #e6e6e6 !important;
+}
+
+.favorite span {
+  display: none;
+}
+
+.favorite.favored span {
+  display: inline;
+}

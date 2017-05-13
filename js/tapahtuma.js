@@ -17,6 +17,7 @@ function makeEvent(apiEvent, beginsAt) {
   }
 
   return {
+    event_id: apiEvent.item_id,
     title: apiEvent.title,
     image: (apiEvent.image === undefined) ? { src: "", title: ""} : {src:  apiEvent.image.src, title: apiEvent.image.title},
     description: apiEvent.description,
