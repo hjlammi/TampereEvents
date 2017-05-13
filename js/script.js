@@ -90,6 +90,7 @@ $(document).ready(function() {
 function showResultsOnPage(apiData, start_datetime) {
   initMap();
   var events = showEventsOnPage(apiData, start_datetime);
+  console.log(events);
   showEventsOnMap(map, events);
 }
 
@@ -98,7 +99,7 @@ function showEventsOnPage(apiData, searchBeginDate) {
   var picker = $('#datepicker1').data('daterangepicker');
   var searchEndDate = moment(picker.endDate).endOf('day').valueOf();
   var events = makeEvents(apiData, searchBeginDate, searchEndDate);
-  addEventsOnPage(events);
+  return addEventsOnPage(events);
 }
 
 /*
@@ -115,6 +116,7 @@ function initMap() {
 }
 
 function showEventsOnMap(map, events) {
+  // console.log(events);
   geocoder = new google.maps.Geocoder();
   var markers = [];
   var i = 0;
@@ -147,6 +149,7 @@ function addEventsOnPage(events) {
       eventsOnPage.push(event);
     });
   }
+  // console.log(eventsOnPage);
   return eventsOnPage;
 }
 
