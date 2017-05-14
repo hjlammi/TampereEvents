@@ -64,14 +64,16 @@ $(document).ready(function() {
     $('#dropdownMenu1').append('<span class="caret"></span>');
   });
 
-  // Haetaan tiedot.
+  // Päivitetään tapahtumasivu klikkaamalla buttonia.
   $('#submit').on('click', function(){
-    // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat ja virheilmoitus.
-    $('.tapahtuma:not(#tapahtuma)').remove();
-    $('[role="alert"]').remove();
-    // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
-    var searchParameters = getSearchParameters();
-    getData(searchParameters);
+    updateEventPage();
+  });
+
+  // Päivitetään tapahtumasivu enterillä.
+  $('body').on('keypress', function(e) {
+    if (e.keyCode === 13) {
+      updateEventPage();
+    }
   });
 
   // Tyhjennetään hakukentät.
@@ -111,13 +113,15 @@ $(document).ready(function() {
     bootbox.confirm('Haluatko varmasti poistaa tapahtuman suosikeista?', function(confirmed) {
       if (confirmed) {
         $('.fav-event:not(#fav-event)').remove();
-          var favorites = getFavorites();
-          _.remove(favorites, function(id) {
-            return id === thisEventId;
-          });
-          setFavorites(favorites);
-          addFavoritesOnPage(favorites);
-          $(this).parents('.fav-event').remove();
+        var favorites = getFavorites();
+        _.remove(favorites, function(id) {
+          return id === thisEventId;
+        });
+        setFavorites(favorites);
+        addFavoritesOnPage(favorites);
+        $(this).parents('.fav-event').remove();
+        var favButton = $('div.tapahtuma[data-event_id=' + thisEventId + '] button.favorite');
+        favButton.removeClass('favored').text('Lisää suosikiksi');
       }
     });
   });
@@ -131,6 +135,7 @@ $(document).ready(function() {
   getData(getSearchParameters());
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
+
   addFavoritesOnPage(getFavorites());
 });
 
@@ -196,6 +201,15 @@ function errorMessage() {
   $('#tapahtuma').after('<div class="row><div class=col-md-12 alert alert-info" role="alert">Hakuehtoja vastaavia tapahtumia ei löytynyt. Yritä uudelleen.</div></div>');
 }
 
+function updateEventPage() {
+  // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat ja virheilmoitus.
+  $('.tapahtuma:not(#tapahtuma)').remove();
+  $('[role="alert"]').remove();
+  // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
+  var searchParameters = getSearchParameters();
+  getData(searchParameters);
+}
+
 // Lisätään tapahtuman tiedot sivulle.
 function addEventOnPage(event) {
   var eventElement = $('#tapahtuma').clone(true);
@@ -240,50 +254,56 @@ function isFavorite(id) {
 }
 
 function addFavoritesOnPage(event_ids) {
-  var searchAddress = 'https://visittampere.fi/api/cardlist?ids=';
-  $.each(event_ids, function(i, event_id) {
-    searchAddress += event_id;
-    if (i < event_ids.length - 1) {
-      searchAddress += ',';
-    }
-  });
+  $('[role="alert"]').remove();
+  if (event_ids.length === 0) {
+    $('#fav-event').after('<div class="row><div class=col-md-12 alert alert-info" role="alert">Suosikkilistallasi ei ole tapahtumia.</div></div>');
+  } else {
+    var searchAddress = 'https://visittampere.fi/api/cardlist?ids=';
+    $.each(event_ids, function(i, event_id) {
+      searchAddress += event_id;
+      if (i < event_ids.length - 1) {
+        searchAddress += ',';
+      }
+    });
 
-  $.ajax({
-    type: 'GET',
-    dataType: 'json',
-    url: searchAddress,
-    success: function(response){
-      var now = moment().startOf('day').valueOf();
-      var events = makeEvents(response, now, moment('3000-01-01').valueOf());
-      $.each(events, function(i, event) {
-        var favEventElement = $('#fav-event').clone(true);
-        favEventElement.find('h2').html(event.title + ' <small>' + ((event.contact_info.address === null) ? '' : event.contact_info.address + ', ') +
-          ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city) + '</small>');
-        favEventElement.find('.kuvaus').text(event.description);
-        favEventElement.find('.kuva').html('<img src="' + event.image.src + '" alt="' + event.image.title + '" />');
-        favEventElement.find('.info').html('<a href="' + event.contact_info.link + '" target="_blank">Lisätietoja</a>');
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: searchAddress,
+      success: function(response){
+        // Hyödynnetään makeEvents -funktiota lajittelun takia, mutta ei rajata menneitä eikä tulevia
+        // tapahtumia pois suosikkilistalta.
+        var events = makeEvents(response, moment('2000-01-01').valueOf(), moment('3000-01-01').valueOf());
+        $.each(events, function(i, event) {
+          var favEventElement = $('#fav-event').clone(true);
+          favEventElement.find('h2').html(event.title + ' <small>' + ((event.contact_info.address === null) ? '' : event.contact_info.address + ', ') +
+            ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city) + '</small>');
+          favEventElement.find('.kuvaus').text(event.description);
+          favEventElement.find('.kuva').html('<img src="' + event.image.src + '" alt="' + event.image.title + '" />');
+          favEventElement.find('.info').html('<a href="' + event.contact_info.link + '" target="_blank">Lisätietoja</a>');
 
-        if (event.occurrences.length !== 0) {
-          var begins_date = moment(event.occurrences[0].begins).format("D.M.YYYY");
-          var begins_time = moment(event.occurrences[0].begins).format("H.mm");
-          var ends_date = moment(event.occurrences[0].ends).format("D.M.YYYY");
-          var ends_time = moment(event.occurrences[0].ends).format("H.mm");
+          if (event.occurrences.length !== 0) {
+            var begins_date = moment(event.occurrences[0].begins).format("D.M.YYYY");
+            var begins_time = moment(event.occurrences[0].begins).format("H.mm");
+            var ends_date = moment(event.occurrences[0].ends).format("D.M.YYYY");
+            var ends_time = moment(event.occurrences[0].ends).format("H.mm");
 
-          favEventElement.find('.ajat ').append('<p>' + begins_date + ' at ' + begins_time + ' &ndash; ' + ends_date + ' at ' + ends_time + '</p>');
-        }
+            favEventElement.find('.ajat ').append('<p>' + begins_date + ' at ' + begins_time + ' &ndash; ' + ends_date + ' at ' + ends_time + '</p>');
+          }
 
-        favEventElement.removeAttr('id');
-        favEventElement.attr('data-event_id', event.event_id);
-        $('#favorite-events').append(favEventElement);
-      });
-    },
-    headers: {
-      "Accept-Language": ''
-    },
-    error: function() {
-      alert( "Tiedon noutaminen ei onnistunut" );
-    }
-  });
+          favEventElement.removeAttr('id');
+          favEventElement.attr('data-event_id', event.event_id);
+          $('#favorite-events').append(favEventElement);
+        });
+      },
+      headers: {
+        "Accept-Language": ''
+      },
+      error: function() {
+        alert( "Tiedon noutaminen ei onnistunut" );
+      }
+    });
+  }
 }
 
 function getSearchParameters() {

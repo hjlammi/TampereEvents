@@ -41,6 +41,7 @@ footer {
   border-top: dotted 3px grey;
   padding: 5px;
   clear: both;
+  margin-top: 10px;
 }
 
 .btn-default.favored:hover {
@@ -68,11 +69,11 @@ footer {
 }
 
 .nav a {
-  background-color: white;
+  background-color: lightgrey;
 }
 
 .nav-tabs > li.active > a {
-  background-color: lightgrey !important;
+  background-color: white !important;
 }
 
 .btn-group {
