@@ -100,6 +100,7 @@ $(document).ready(function() {
       });
     }
     setFavorites(favorites);
+    addFavoritesOnPage(getFavorites());
   });
 
   $('nav a').click(function (e) {
@@ -107,21 +108,10 @@ $(document).ready(function() {
     $(this).tab('show');
   });
 
-  // $('ul:first').find('a[href="#favorite-events"]').on('click', function() {
-  //   if ($('#favorite-events').hasClass('hidden')) {
-  //     $('#favorite-events').removeClass('hidden');
-  //     $('#events-search').addClass('hidden');
-  //   }
-  // });
-  //
-  // $('ul:first').find('a[href="#home"]').on('click', function() {
-  //   $('#events-search').removeClass('hidden');
-  //   $('#favorite-events').addClass('hidden');
-  // });
-
   getData(getSearchParameters());
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
+  addFavoritesOnPage(getFavorites());
 });
 
 function showResultsOnPage(apiData, start_datetime) {
@@ -227,6 +217,26 @@ function setFavorites(favorites) {
 function isFavorite(id) {
   var favorites = getFavorites();
   return _.includes(favorites, id);
+}
+
+function addFavoritesOnPage(event_ids) {
+  var searchAddress = 'http://visittampere.fi:80/api/cardlist?ids=';
+  $.each(event_ids, function(i, event_id) {
+    searchAddress += event_id;
+    if (i < event_ids.length - 1) {
+      searchAddress += ',';
+    }
+  });
+  console.log(searchAddress);
+  // $('#favorite-events').text(JSON.stringify(event_ids));
+
+  $.each(event_ids, function(i, id) {
+    var favEventElement = $('#fav-event').clone(true);
+    favEventElement.find('h2').html(id);
+
+    favEventElement.removeAttr('id');
+    $('#favorite-events').append(favEventElement);
+  });
 }
 
 function getSearchParameters() {
