@@ -104,19 +104,22 @@ $(document).ready(function() {
     addFavoritesOnPage(getFavorites());
   });
 
-  // console.log($('.fav-event button'));
+
   $('.fav-event button').on('click', function() {
-    if (confirm('Haluatko varmasti poistaa tapahtuman suosikeista?')) {
-      $('.fav-event:not(#fav-event)').remove();
-      var favorites = getFavorites();
-      var thisEventId = parseInt($(this).parents('.fav-event').attr('data-event_id'));
-      _.remove(favorites, function(id) {
-        return id === thisEventId;
-      });
-      setFavorites(favorites);
-      addFavoritesOnPage(favorites);
-      $(this).parents('.fav-event').remove();
-    }
+    var thisEventId = parseInt($(this).parents('.fav-event').attr('data-event_id'));
+
+    bootbox.confirm('Haluatko varmasti poistaa tapahtuman suosikeista?', function(confirmed) {
+      if (confirmed) {
+        $('.fav-event:not(#fav-event)').remove();
+          var favorites = getFavorites();
+          _.remove(favorites, function(id) {
+            return id === thisEventId;
+          });
+          setFavorites(favorites);
+          addFavoritesOnPage(favorites);
+          $(this).parents('.fav-event').remove();
+      }
+    });
   });
 
   // Navigointi.
