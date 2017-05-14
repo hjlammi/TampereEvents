@@ -104,6 +104,22 @@ $(document).ready(function() {
     addFavoritesOnPage(getFavorites());
   });
 
+  // console.log($('.fav-event button'));
+  $('.fav-event button').on('click', function() {
+    if (confirm('Haluatko varmasti poistaa tapahtuman suosikeista?')) {
+      $('.fav-event:not(#fav-event)').remove();
+      var favorites = getFavorites();
+      var thisEventId = parseInt($(this).parents('.fav-event').attr('data-event_id'));
+      _.remove(favorites, function(id) {
+        return id === thisEventId;
+      });
+      setFavorites(favorites);
+      addFavoritesOnPage(favorites);
+      $(this).parents('.fav-event').remove();
+    }
+  });
+
+  // Navigointi.
   $('nav a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');
@@ -232,12 +248,10 @@ function addFavoritesOnPage(event_ids) {
   $.ajax({
     type: 'GET',
     dataType: 'json',
-    // data: searchParameters,
     url: searchAddress,
     success: function(response){
       var now = moment().startOf('day').valueOf();
       var events = makeEvents(response, now, moment('3000-01-01').valueOf());
-      console.log(events);
       $.each(events, function(i, event) {
         var favEventElement = $('#fav-event').clone(true);
         favEventElement.find('h2').html(event.title + ' <small>' + ((event.contact_info.address === null) ? '' : event.contact_info.address + ', ') +
@@ -256,6 +270,7 @@ function addFavoritesOnPage(event_ids) {
         }
 
         favEventElement.removeAttr('id');
+        favEventElement.attr('data-event_id', event.event_id);
         $('#favorite-events').append(favEventElement);
       });
     },
