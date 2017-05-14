@@ -11,90 +11,114 @@
   <body>
     <div class="container">
       <h1>Tampereen seudun tapahtumat</h1>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h2>Tapahtumahaku</h2>
+
+      <div>
+    <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Tapahtumakalenteri</a></li>
+          <li role="presentation"><a href="#favorite-events" aria-controls="favorites" role="tab" data-toggle="tab">Suosikkitapahtumat</a></li>
+          <!-- <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li> -->
+          <!-- <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li> -->
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="home">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h2>Tapahtumahaku</h2>
+                  </div>
+                  <div class="panel-body">
+                  <!-- Form code begins -->
+                  <form class="form-inline">
+                    <div class="input-group form-group">
+                      <input id="datepicker1" type="text" class="form-control" name="date">
+                      <span id="calendar" class="glyphicon glyphicon-calendar form-control-feedback"></span>
+                    </div>
+                    <div class="form-group dropdown">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Kategoria
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="#">Festivaali</a></li>
+                        <li><a href="#">Lapsille</a></li>
+                        <li><a href="#">Musiikki</a></li>
+                        <li><a href="#">Taide</a></li>
+                        <li><a href="#">Tanssi</a></li>
+                        <li><a href="#">Teatteri</a></li>
+                        <li><a href="#">Urheilu</a></li>
+                        <li><a href="#">Kaikki</a></li>
+                      </ul>
+                    </div>
+                    <div class="form-group">
+                      <!-- <label class="control-label" for="search" placeholder="Haku"></label> -->
+                      <input class="form-control" id="search" type="text" placeholder="Kirjoita hakusana"/>
+                    </div>
+                    <div class="checkbox form-group">
+                      <label>
+                        <input id="free" type="checkbox">Maksuton
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <!-- Submit button -->
+                      <button id="submit" class="form-group btn btn-primary" type="button">Hae tapahtumia</button>
+                    </div>
+                    <div class="form-group">
+                      <button id="clear" class="form group btn btn-primary" type="button">Tyhjennä valinnat</button>
+                    </div>
+                  </form>
+                    <!-- Form code ends -->
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="panel-body">
-            <!-- Form code begins -->
-            <form class="form-inline">
-              <div class="input-group form-group">
-                <input id="datepicker1" type="text" class="form-control" name="date">
-                <span id="calendar" class="glyphicon glyphicon-calendar form-control-feedback"></span>
+            <div class="row">
+              <div class="col-md-8" id="tapahtumat">
+                <div class="panel panel-default tapahtuma" id="tapahtuma">
+                  <div class="panel-heading">
+                    <h2>Otsikko</h2>
+                  </div>
+                  <div class="panel-body">
+                    <div class="col-md-5 col-sm-5 kuva"></div>
+                    <div class="col-md-7 col-sm-7">
+                      <p class= "kuvaus">Kuvaus</p>
+                      <p class="info">Nettisivut</p>
+                      <h3>Seuraavat ajankohdat:</h3>
+                      <div class="ajat"></div>
+                      <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-default favorite">Lisää suosikiksi</button>
+                        <button type="button" class="btn btn-default">Näytä kartalla</button>
+                        <button type="button" class="btn btn-default">Näytä reittiohjeet</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="form-group dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                  Kategoria
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                  <li><a href="#">Festivaali</a></li>
-                  <li><a href="#">Lapsille</a></li>
-                  <li><a href="#">Musiikki</a></li>
-                  <li><a href="#">Taide</a></li>
-                  <li><a href="#">Tanssi</a></li>
-                  <li><a href="#">Teatteri</a></li>
-                  <li><a href="#">Urheilu</a></li>
-                  <li><a href="#">Kaikki</a></li>
-                </ul>
-              </div>
-              <div class="form-group">
-                <!-- <label class="control-label" for="search" placeholder="Haku"></label> -->
-                <input class="form-control" id="search" type="text" placeholder="Kirjoita hakusana"/>
-              </div>
-              <div class="checkbox form-group">
-                <label>
-                  <input id="free" type="checkbox">Maksuton
-                </label>
-              </div>
-              <div class="form-group">
-                <!-- Submit button -->
-                <button id="submit" class="form-group btn btn-primary" type="button">Hae tapahtumia</button>
-              </div>
-              <div class="form-group">
-                <button id="clear" class="form group btn btn-primary" type="button">Tyhjennä valinnat</button>
-              </div>
-            </form>
-              <!-- Form code ends -->
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-8" id="tapahtumat">
-          <div class="panel panel-default tapahtuma" id="tapahtuma">
-            <div class="panel-heading">
-              <h2>Otsikko</h2>
-            </div>
-            <div class="panel-body">
-              <div class="col-md-5 col-sm-5 kuva"></div>
-              <div class="col-md-7 col-sm-7">
-                <p class= "kuvaus">Kuvaus</p>
-                <p class="info">Nettisivut</p>
-                <h3>Seuraavat ajankohdat:</h3>
-                <div class="ajat"></div>
-                <div class="btn-group" role="group" aria-label="...">
-                  <button type="button" class="btn btn-default favorite">Lisää suosikiksi</button>
-                  <button type="button" class="btn btn-default">Näytä kartalla</button>
-                  <button type="button" class="btn btn-default">Näytä reittiohjeet</button>
+              <div class="col-md-4 map-container">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h2>Tapahtumat kartalla:</h2>
+                  </div>
+                  <div class="panel-body">
+                    <div id="map">Kartta</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-4 map-container">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h2>Tapahtumat kartalla:</h2>
-            </div>
-            <div class="panel-body">
-              <div id="map">Kartta</div>
-            </div>
+          <div role="tabpanel" class="tab-pane" id="favorite-events">
+            Hei
           </div>
+          <!-- <div role="tabpanel" class="tab-pane" id="messages">...</div> -->
+          <!-- <div role="tabpanel" class="tab-pane" id="settings">...</div> -->
         </div>
+
       </div>
+
+
     </div>
     <script type="text/javascript" src="js/moment-with-locales.js"></script>
     <script src="js/markerclusterer.js"></script>

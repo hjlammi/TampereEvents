@@ -102,6 +102,23 @@ $(document).ready(function() {
     setFavorites(favorites);
   });
 
+  $('nav a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+
+  // $('ul:first').find('a[href="#favorite-events"]').on('click', function() {
+  //   if ($('#favorite-events').hasClass('hidden')) {
+  //     $('#favorite-events').removeClass('hidden');
+  //     $('#events-search').addClass('hidden');
+  //   }
+  // });
+  //
+  // $('ul:first').find('a[href="#home"]').on('click', function() {
+  //   $('#events-search').removeClass('hidden');
+  //   $('#favorite-events').addClass('hidden');
+  // });
+
   getData(getSearchParameters());
   // Piirretään kartta ilman markereita, kun sivu on valmis.
   initMap();
@@ -195,7 +212,6 @@ function addEventOnPage(event) {
   if (isFavorite(event.event_id)) {
     eventElement.find('button:first').addClass('favored').html('<span class="glyphicon glyphicon-heart"></span> Suosikki');
   }
-
 
   $('#tapahtumat').append(eventElement);
 }
