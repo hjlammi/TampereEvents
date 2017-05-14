@@ -173,39 +173,29 @@ describe("makeEvents", function() {
     ]);
   });
 
-  it("sorts events by comparing the begins times of the first occurrences ", function() {
-    var begins = Date.parse("2017-11-11T00:00:00");
-    var lastBegins = Date.parse("2018-11-01T00:00:00");
-    var apiEvents = [{
-      title: "Lol",
+  function generateEvent(title, startDatetimeStr) {
+    var startDatetime = Date.parse(startDatetimeStr);
+    return {
+      title: title,
       image: {src: "www.lol.jpg", title: "lol.jpg"},
       contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
       times : [
-        {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2016-01-02T00:00:00")},
-        {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2017-01-02T00:00:00")},
-        {start_datetime: Date.parse("2018-11-01T00:00:00"), end_datetime: Date.parse("2018-12-02T00:00:00")}]
-    },
-      {
-      title: "Apua",
-      image: {src: "www.apua.jpg", title: "apua.jpg"},
-      contact_info: {city: "Apuacity", address: "Apuastreet 1", link: "www.apua.com"},
-      times : [
-        {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
-        {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
-        {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")}]
-    },
-    {
-      title: "Foo",
-      image: {src: "www.foo.jpg", title: "foo.jpg"},
-      contact_info: {city: "Foocity", address: "Foostreet 1", link: "www.foo.com"},
-      times : [
-        {start_datetime: Date.parse("2019-01-01T00:00:00"), end_datetime: Date.parse("2019-01-02T00:00:00")},
-        {start_datetime: Date.parse("2020-01-01T00:00:00"), end_datetime: Date.parse("2020-01-02T00:00:00")}]
-    }]
+        {start_datetime: startDatetime, end_datetime: startDatetime + 24*60*60*1000}]
+    }
+  }
+
+  it("sorts events by comparing the begins times of the first occurrences ", function() {
+    var begins = Date.parse("2017-11-11T00:00:00");
+    var lastBegins = Date.parse("2018-11-01T00:00:00");
+    var apiEvents = [
+      generateEvent("Lol", "2018-11-01T00:00:00"),
+      generateEvent("Apua", "2018-01-01T00:00:00"),
+      generateEvent("Foo", "2020-01-01T00:00:00")]
     expect(Immutable.fromJS(makeEvents(apiEvents, begins, lastBegins)).map(function(t){
       return t.get("title");
     }).toJS()).toEqual(["Apua", "Lol"]);
   });
+
 });
 
 describe("isLastDateSameAsBeginsDate", function() {

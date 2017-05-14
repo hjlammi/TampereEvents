@@ -235,9 +235,10 @@ function addFavoritesOnPage(event_ids) {
     // data: searchParameters,
     url: searchAddress,
     success: function(response){
-      $.each(response, function(i, apiEvent) {
-        var now = moment().startOf('day').valueOf();
-        var event = makeEvent(apiEvent, now);
+      var now = moment().startOf('day').valueOf();
+      var events = makeEvents(response, now, moment('3000-01-01').valueOf());
+      console.log(events);
+      $.each(events, function(i, event) {
         var favEventElement = $('#fav-event').clone(true);
         favEventElement.find('h2').html(event.title + ' <small>' + ((event.contact_info.address === null) ? '' : event.contact_info.address + ', ') +
           ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city) + '</small>');
