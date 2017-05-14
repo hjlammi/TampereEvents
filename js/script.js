@@ -87,6 +87,7 @@ $(document).ready(function() {
 
   // Lisätään tapahtuma suosikiksi.
   $('.tapahtuma button:first').on('click', function() {
+    $('.fav-event:not(#fav-event)').remove();
     var favorites = getFavorites();
     var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
     $(this).toggleClass('favored');
@@ -220,22 +221,49 @@ function isFavorite(id) {
 }
 
 function addFavoritesOnPage(event_ids) {
-  var searchAddress = 'http://visittampere.fi:80/api/cardlist?ids=';
+  var searchAddress = 'https://visittampere.fi/api/cardlist?ids=';
   $.each(event_ids, function(i, event_id) {
     searchAddress += event_id;
     if (i < event_ids.length - 1) {
       searchAddress += ',';
     }
   });
-  console.log(searchAddress);
-  // $('#favorite-events').text(JSON.stringify(event_ids));
 
-  $.each(event_ids, function(i, id) {
-    var favEventElement = $('#fav-event').clone(true);
-    favEventElement.find('h2').html(id);
+  $.ajax({
+    type: 'GET',
+    dataType: 'json',
+    // data: searchParameters,
+    url: searchAddress,
+    success: function(response){
+      $.each(response, function(i, apiEvent) {
+        var now = moment().startOf('day').valueOf();
+        var event = makeEvent(apiEvent, now);
+        var favEventElement = $('#fav-event').clone(true);
+        favEventElement.find('h2').html(event.title + ' <small>' + ((event.contact_info.address === null) ? '' : event.contact_info.address + ', ') +
+          ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city) + '</small>');
+        favEventElement.find('.kuvaus').text(event.description);
+        favEventElement.find('.kuva').html('<img src="' + event.image.src + '" alt="' + event.image.title + '" />');
+        favEventElement.find('.info').html('<a href="' + event.contact_info.link + '" target="_blank">Lisätietoja</a>');
 
-    favEventElement.removeAttr('id');
-    $('#favorite-events').append(favEventElement);
+        if (event.occurrences.length !== 0) {
+          var begins_date = moment(event.occurrences[0].begins).format("D.M.YYYY");
+          var begins_time = moment(event.occurrences[0].begins).format("H.mm");
+          var ends_date = moment(event.occurrences[0].ends).format("D.M.YYYY");
+          var ends_time = moment(event.occurrences[0].ends).format("H.mm");
+
+          favEventElement.find('.ajat ').append('<p>' + begins_date + ' at ' + begins_time + ' &ndash; ' + ends_date + ' at ' + ends_time + '</p>');
+        }
+
+        favEventElement.removeAttr('id');
+        $('#favorite-events').append(favEventElement);
+      });
+    },
+    headers: {
+      "Accept-Language": ''
+    },
+    error: function() {
+      alert( "Tiedon noutaminen ei onnistunut" );
+    }
   });
 }
 
