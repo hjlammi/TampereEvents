@@ -44,20 +44,30 @@ footer {
   margin-top: 10px;
 }
 
-.btn-default.favored:hover {
-  background-color: hotpink !important;
+#show-map-btn,
+#favorite-btn {
+  background-color: white;
 }
 
-.btn-default.favored {
-  background-color: #f67cb9 !important;
+#show-map-btn:hover,
+#favorite-btn:hover {
+  background-color: #e6e6e6;
 }
 
-.btn-default {
-  background-color: white !important;
+#show-map-btn.show {
+  background-color: lightblue;
 }
 
-.btn-default:hover {
-  background-color: #e6e6e6 !important;
+#show-map-btn.show:hover {
+  background-color: #74ceec;
+}
+
+#favorite-btn.favored {
+  background-color: #f67cb9;
+}
+
+#favorite-btn.favored:hover {
+  background-color: hotpink;
 }
 
 .favorite span {

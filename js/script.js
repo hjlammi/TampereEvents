@@ -107,7 +107,7 @@ $(document).ready(function() {
     addFavoritesOnPage(getFavorites());
   });
 
-
+  // Suosikin poistaminen suosikeista suosikkilistan poistonapilla.
   $('.fav-event button').on('click', function() {
     var thisEventId = parseInt($(this).parents('.fav-event').attr('data-event_id'));
 
@@ -127,10 +127,15 @@ $(document).ready(function() {
     });
   });
 
-  // Navigointi.
+  // Navigointi tabien välillä.
   $('nav a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');
+  });
+
+  $('.tapahtuma button.on-map').on('click', function() {
+    $(this).toggleClass('show');
+    initMap();
   });
 
   getData(getSearchParameters());
