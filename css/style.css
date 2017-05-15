@@ -44,29 +44,29 @@ footer {
   margin-top: 10px;
 }
 
-#show-map-btn,
-#favorite-btn {
+.tapahtuma .btn.btn-default.favorite,
+.tapahtuma .btn.btn-default.on-map {
   background-color: white;
 }
 
-#show-map-btn:hover,
-#favorite-btn:hover {
+.tapahtuma .btn.btn-default.favorite:hover,
+.tapahtuma .btn.btn-default.on-map:hover {
   background-color: #e6e6e6;
 }
 
-#show-map-btn.show {
+.tapahtuma .btn.btn-default.show {
   background-color: lightblue;
 }
 
-#show-map-btn.show:hover {
+.tapahtuma .btn.btn-default.show:hover {
   background-color: #74ceec;
 }
 
-#favorite-btn.favored {
+.tapahtuma .btn.btn-default.favored {
   background-color: #f67cb9;
 }
 
-#favorite-btn.favored:hover {
+.tapahtuma .btn.btn-default.favored:hover {
   background-color: hotpink;
 }
 
