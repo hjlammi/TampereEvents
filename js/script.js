@@ -135,6 +135,7 @@ $(document).ready(function() {
 
   // Näytetään yksittäinen markeri kartalla.
   $('.tapahtuma button.on-map').on('click', function() {
+    $('#route-panel').empty();
     $(this).toggleClass('show');
     if ($(this).hasClass('show')) {
       initMap();
@@ -168,6 +169,42 @@ $(document).ready(function() {
       initMap();
       showEventsOnMap(map, events);
     }
+  });
+
+  // Näytetään reitti ja reittiohjeet kartalla.
+  $('.tapahtuma button.directions').on('click', function() {
+    $('#route-panel').empty();
+    var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
+    bootbox.prompt({
+      title: "Kirjoita lähtöpaikka:",
+      callback: function(result) {
+        initMap();
+        var directionsService = new google.maps.DirectionsService();
+        var directionsDisplay = new google.maps.DirectionsRenderer();
+        var startPoint, endPoint;
+        directionsDisplay.setMap(map);
+        directionsDisplay.setPanel($('#route-panel').get(0));
+
+        $.each(events, function(i, event) {
+          if (event.event_id === thisEventId) {
+            var address = event.contact_info.address + ', ' + event.contact_info.city;
+            var title = event.title;
+
+            directionsService.route({
+                origin: result,
+                destination: address,
+                travelMode: 'DRIVING'
+              }, function(response, status) {
+                if (status === 'OK') {
+                  directionsDisplay.setDirections(response);
+                } else {
+                  window.alert('Directions request failed due to ' + status);
+                }
+            });
+          }
+        });
+      }
+    });
   });
 
   getData(getSearchParameters());
@@ -258,6 +295,7 @@ function updateEventPage() {
   // Tyhjennetään DOM:sta edellisen hauan antamat tapahtumat ja virheilmoitus.
   $('.tapahtuma:not(#tapahtuma)').remove();
   $('[role="alert"]').remove();
+  $('#route-panel').empty();
   // Kutsutaan metodia, joka palauttaa hakuun tarvittavat parametrit.
   var searchParameters = getSearchParameters();
   getData(searchParameters);
