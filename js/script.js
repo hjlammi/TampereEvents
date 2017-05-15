@@ -84,7 +84,7 @@ $(document).ready(function() {
     var picker = $('#datepicker1').data('daterangepicker');
     picker.setStartDate(moment().format('D.M.YYYY'));
     picker.setEndDate(moment().format('D.M.YYYY'));
-    $('#checkbox').attr('checked', 'false');
+    $('#free').prop('checked', false);
   });
 
   // Lisätään tapahtuma suosikiksi.
