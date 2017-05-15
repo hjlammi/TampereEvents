@@ -133,15 +133,23 @@ $(document).ready(function() {
     $(this).tab('show');
   });
 
+  // Näytetään yksittäinen markeri kartalla.
   $('.tapahtuma button.on-map').on('click', function() {
     $(this).toggleClass('show');
     if ($(this).hasClass('show')) {
       initMap();
       var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
+      var mapBtns = $('.tapahtuma button.on-map');
+      // Poistetaan muilta napeilta luokka, joka tarkoittaa, että nappi on "päällä".
+      $.each(mapBtns, function(i, btn) {
+        var btnsId = parseInt($(btn).parents('.tapahtuma').attr('data-event_id'));
+        if (thisEventId !== btnsId) {
+          $(btn).removeClass('show');
+        }
+      });
       $.each(events, function(i, event) {
         if (event.event_id === thisEventId) {
           var geocoder = new google.maps.Geocoder();
-          console.log(event);
           var address = event.contact_info.address + ', ' + event.contact_info.city;
           var title = event.title;
           geocoder.geocode( { 'address': address}, function(results, status) {
