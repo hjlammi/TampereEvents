@@ -152,6 +152,8 @@ $(document).ready(function() {
                   position: results[0].geometry.location,
                   title: title + ', ' + address
               });
+              map.setZoom(15);
+              map.panTo(marker.position);
               var infowindow = new google.maps.InfoWindow({
                 content: marker.title
               });
@@ -197,14 +199,13 @@ function showEventsOnPage(apiData, searchBeginDate) {
 function initMap() {
   var tampere = {lat: 61.507756, lng: 23.760240};
   map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 8,
+    zoom: 9,
     center: tampere
   });
 }
 
 function showEventsOnMap(map, events) {
   geocoder = new google.maps.Geocoder();
-  var marker;
   var markers = [];
   var i = 0;
   var markerclusterer = new MarkerClusterer(map, [],
@@ -213,6 +214,7 @@ function showEventsOnMap(map, events) {
     var address = event.contact_info.address + ', ' + event.contact_info.city;
     var title = event.title;
     geocoder.geocode({'address': address}, function(results, status) {
+      var marker;
       if (status === 'OK') {
         var lat = results[0].geometry.location.lat();
         // Piirretään samassa paikassa sijaitsevat tapahtumat hieman erilleen toisistaan,
@@ -223,6 +225,7 @@ function showEventsOnMap(map, events) {
           title: title + ', ' + address
         });
         markerclusterer.addMarker(marker);
+
         var infowindow = new google.maps.InfoWindow({
           content: marker.title
         });
