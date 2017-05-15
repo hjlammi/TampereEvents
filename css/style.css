@@ -89,3 +89,12 @@ footer {
 .btn-group {
   box-shadow: 2px 2px 3px lightgrey;
 }
+
+button a {
+  color: #333;
+}
+
+button a:hover {
+  color: black;
+  text-decoration: none;
+}

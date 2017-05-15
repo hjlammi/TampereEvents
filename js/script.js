@@ -157,9 +157,7 @@ $(document).ready(function() {
               var infowindow = new google.maps.InfoWindow({
                 content: marker.title
               });
-              marker.addListener('click', function() {
-                infowindow.open(map, marker);
-              });
+              infowindow.open(map, marker);
             }
           });
         }
