@@ -22,22 +22,22 @@ function makeEvent(apiEvent, beginsAt) {
     image: (apiEvent.image === undefined) ? { src: "", title: ""} : {src:  apiEvent.image.src, title: apiEvent.image.title},
     description: apiEvent.description,
     contact_info: {city: apiEvent.contact_info.city, address: apiEvent.contact_info.address, link: apiEvent.contact_info.link},
-    occurrences: removePastOccurrences(occurrences, beginsAt)
+    occurrences: removeOccurrencesThatNotInRange(occurrences, beginsAt)
   };
 }
 
-function isOccurrenceInThePast(occurrence, beginsAt) {
-  return occurrence.begins < beginsAt;
+function isOccurrenceInRange(occurrence, beginsAt) {
+  return occurrence.ends >= beginsAt;
 }
 
-function removePastOccurrences(occurrences, beginsAt) {
-  var futureOccurrences = [];
+function removeOccurrencesThatNotInRange(occurrences, beginsAt) {
+  var occurrencesInRange = [];
   $.each(occurrences, function(i, occurrence){
-    if (!isOccurrenceInThePast(occurrence, beginsAt)) {
-      futureOccurrences.push(occurrence);
+    if (isOccurrenceInRange(occurrence, beginsAt)) {
+      occurrencesInRange.push(occurrence);
     }
   });
-  return futureOccurrences;
+  return occurrencesInRange;
 }
 
 // Metodi palauttaa true, jos event on menneisyydessä.

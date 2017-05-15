@@ -1,7 +1,7 @@
 
 describe("makeEvent", function() {
 
-  it("returns only all the future occurrences of an event", function() {
+  it("returns only occurences that have end time in the future", function() {
     var apiEvent = {
         item_id: 123,
         title: "Lol",
@@ -10,6 +10,7 @@ describe("makeEvent", function() {
         contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
         single_datetime: false,
         times: [
+          {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2016-01-02T00:00:00")},
           {start_datetime: Date.parse("2016-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
           {start_datetime: Date.parse("2017-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
           {start_datetime: Date.parse("2018-01-01T00:00:00"), end_datetime: Date.parse("2018-01-02T00:00:00")},
@@ -25,13 +26,14 @@ describe("makeEvent", function() {
       description: "Lol",
       contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
       occurrences: [
+        {begins: Date.parse("2016-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
         {begins: Date.parse("2017-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
         {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
     });
   });
 
-  it("returns one occurrence of a single event", function() {
+  it("returns one occurrence of a single event that has ends time in the future", function() {
     var apiEvent = {
         item_id: 123,
         title: "Lol",
@@ -39,30 +41,55 @@ describe("makeEvent", function() {
         description: "Lol",
         contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
         single_datetime: true,
-        start_datetime: Date.parse("2018-01-01T00:00:00"),
-        end_datetime: Date.parse("2018-01-02T00:00:00")}
+        start_datetime: Date.parse("2017-01-01T00:00:00"),
+        end_datetime: Date.parse("2018-02-02T00:00:00")}
 
-    expect(makeEvent(apiEvent)).toEqual({
+    var begins = Date.parse("2018-01-01T00:00:00");
+
+    expect(makeEvent(apiEvent, begins)).toEqual({
       event_id: 123,
       title: "Lol",
       image: {src: "www.lol.jpg", title: "lol.jpg"},
       description: "Lol",
       contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
-      occurrences: [{begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]
+      occurrences: [{begins: Date.parse("2017-01-01T00:00:00"), ends: Date.parse("2018-02-02T00:00:00")}]
+    });
+  });
+
+  it("returns no occurrences because ends time is in the past", function() {
+    var apiEvent = {
+        item_id: 123,
+        title: "Lol",
+        image: {src: "www.lol.jpg", title: "lol.jpg"},
+        description: "Lol",
+        contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
+        single_datetime: true,
+        start_datetime: Date.parse("2017-01-01T00:00:00"),
+        end_datetime: Date.parse("2017-02-02T00:00:00")}
+
+    var begins = Date.parse("2018-01-01T00:00:00");
+
+    expect(makeEvent(apiEvent, begins)).toEqual({
+      event_id: 123,
+      title: "Lol",
+      image: {src: "www.lol.jpg", title: "lol.jpg"},
+      description: "Lol",
+      contact_info: {city: "Lolcity", address: "Lolstreet 1", link: "www.lol.com"},
+      occurrences: []
     });
   });
 });
 
-describe("isOccurrenceInThePast", function() {
+describe("isOccurrenceInRange", function() {
 
-  it("returns true when the occurrence begins in the past", function() {
+  it("returns true when the occurrence ends is in the range", function() {
     var occurrence = {
       begins: Date.parse("2017-01-01T00:00:00"),
-      ends: Date.parse("2017-01-02T00:00:00")}
+      ends: Date.parse("2017-03-02T00:00:00")}
 
     var begins = Date.parse("2017-02-02T00:00:00");
 
-    expect(isOccurrenceInThePast(occurrence, begins)).toBe(true);
+    expect(isOccurrenceInRange(occurrence, begins)).toBe(true);
   });
 
   it("returns false when the occurrence begins in the future", function() {
@@ -70,16 +97,17 @@ describe("isOccurrenceInThePast", function() {
       begins: Date.parse("2018-01-01T00:00:00"),
       ends: Date.parse("2018-01-02T00:00:00")}
 
-    var begins = Date.parse("2017-01-01T00:00:00");
+    var begins = Date.parse("2019-01-01T00:00:00");
 
-    expect(isOccurrenceInThePast(occurrence, begins)).toBe(false);
+    expect(isOccurrenceInRange(occurrence, begins)).toBe(false);
   });
 });
 
-describe("removePastOccurrences", function() {
+describe("removeOccurrencesThatNotInRange", function() {
 
   it("returns only the future occurrences of an event", function() {
     var occurrences = [
+      {begins: Date.parse("2016-01-01T00:00:00"), ends: Date.parse("2016-01-02T00:00:00")},
       {begins: Date.parse("2016-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
       {begins: Date.parse("2017-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
       {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}
@@ -87,7 +115,8 @@ describe("removePastOccurrences", function() {
 
     var begins = Date.parse("2017-01-01T00:00:00");
 
-    expect(removePastOccurrences(occurrences, begins)).toEqual([
+    expect(removeOccurrencesThatNotInRange(occurrences, begins)).toEqual([
+      {begins: Date.parse("2016-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
       {begins: Date.parse("2017-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")},
       {begins: Date.parse("2018-01-01T00:00:00"), ends: Date.parse("2018-01-02T00:00:00")}]);
   });
