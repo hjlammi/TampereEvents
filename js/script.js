@@ -135,7 +135,37 @@ $(document).ready(function() {
 
   $('.tapahtuma button.on-map').on('click', function() {
     $(this).toggleClass('show');
-    initMap();
+    if ($(this).hasClass('show')) {
+      initMap();
+      var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
+      $.each(events, function(i, event) {
+        if (event.event_id === thisEventId) {
+          var geocoder = new google.maps.Geocoder();
+          console.log(event);
+          var address = event.contact_info.address + ', ' + event.contact_info.city;
+          var title = event.title;
+          geocoder.geocode( { 'address': address}, function(results, status) {
+            if (status == 'OK') {
+              map.setCenter(results[0].geometry.location);
+              var marker = new google.maps.Marker({
+                  map: map,
+                  position: results[0].geometry.location,
+                  title: title + ', ' + address
+              });
+              var infowindow = new google.maps.InfoWindow({
+                content: marker.title
+              });
+              marker.addListener('click', function() {
+                infowindow.open(map, marker);
+              });
+            }
+          });
+        }
+      });
+    } else {
+      initMap();
+      showEventsOnMap(map, events);
+    }
   });
 
   getData(getSearchParameters());
@@ -190,7 +220,7 @@ function showEventsOnMap(map, events) {
         var lng = results[0].geometry.location.lng() + 0.00004 * i;
         marker = new google.maps.Marker({
           position: {lat: lat, lng: lng},
-          title: title + ', ' + address,
+          title: title + ', ' + address
         });
         markerclusterer.addMarker(marker);
         var infowindow = new google.maps.InfoWindow({
