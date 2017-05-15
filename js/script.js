@@ -1,3 +1,4 @@
+// Globaali muuttuja tapahtumille.
 var events;
 
 function getData(searchParameters) {
@@ -153,6 +154,10 @@ function showEventsOnPage(apiData, searchBeginDate) {
   return events;
 }
 
+/*
+ * Karttametodit.
+ */
+
 // Luodaan kartta, jonka keskipisteenä on Tampere.
 function initMap() {
   var tampere = {lat: 61.507756, lng: 23.760240};
@@ -164,6 +169,7 @@ function initMap() {
 
 function showEventsOnMap(map, events) {
   geocoder = new google.maps.Geocoder();
+  var marker;
   var markers = [];
   var i = 0;
   var markerclusterer = new MarkerClusterer(map, [],
@@ -174,11 +180,20 @@ function showEventsOnMap(map, events) {
     geocoder.geocode({'address': address}, function(results, status) {
       if (status === 'OK') {
         var lat = results[0].geometry.location.lat();
+        // Piirretään samassa paikassa sijaitsevat tapahtumat hieman erilleen toisistaan,
+        // jotta molempien markerit näkyvät kartalla eivätkä ole päällekkäin.
         var lng = results[0].geometry.location.lng() + 0.00004 * i;
-        markerclusterer.addMarker(new google.maps.Marker({
+        marker = new google.maps.Marker({
           position: {lat: lat, lng: lng},
           title: title + ', ' + address,
-        }));
+        });
+        markerclusterer.addMarker(marker);
+        var infowindow = new google.maps.InfoWindow({
+          content: marker.title
+        });
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
         i++;
       }
     });
