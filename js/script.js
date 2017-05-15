@@ -71,7 +71,7 @@ $(document).ready(function() {
   });
 
   // Päivitetään tapahtumasivu enterillä.
-  $('body').on('keypress', function(e) {
+  $('form').on('keypress', function(e) {
     if (e.keyCode === 13) {
       updateEventPage();
     }
@@ -178,10 +178,12 @@ $(document).ready(function() {
     bootbox.prompt({
       title: "Kirjoita lähtöpaikka:",
       callback: function(result) {
+        if (result === null) {
+          return;
+        }
         initMap();
         var directionsService = new google.maps.DirectionsService();
         var directionsDisplay = new google.maps.DirectionsRenderer();
-        var startPoint, endPoint;
         directionsDisplay.setMap(map);
         directionsDisplay.setPanel($('#route-panel').get(0));
 
