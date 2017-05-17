@@ -54,11 +54,11 @@ footer {
   background-color: #e6e6e6;
 }
 
-.tapahtuma .btn.btn-default.show {
+.tapahtuma .btn.btn-default.show-map {
   background-color: lightblue;
 }
 
-.tapahtuma .btn.btn-default.show:hover {
+.tapahtuma .btn.btn-default.show-map:hover {
   background-color: #74ceec;
 }
 
@@ -86,15 +86,20 @@ footer {
   background-color: white !important;
 }
 
-.btn-group {
+button {
   box-shadow: 2px 2px 3px lightgrey;
 }
 
-button a {
+.btn-group a {
   color: #333;
 }
 
-button a:hover {
-  color: black;
+.btn-group a:hover {
+  color: #333;
   text-decoration: none;
+}
+
+.btn-group button {
+  margin: 1px;
+  border-radius: 4px !important;
 }

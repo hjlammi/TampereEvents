@@ -136,11 +136,11 @@ $(document).ready(function() {
   // Näytetään yksittäinen markeri kartalla.
   $('.tapahtuma button.on-map').on('click', function() {
     $('#route-panel').empty();
-    $(this).toggleClass('show');
-    if ($(this).hasClass('show')) {
+    $(this).toggleClass('show-map');
+    if ($(this).hasClass('show-map')) {
       initMap();
       // Poistetaan muilta napeilta luokka, joka tarkoittaa, että nappi on "päällä".
-      $('.tapahtuma button.on-map').not(this).removeClass('show');
+      $('.tapahtuma button.on-map').not(this).removeClass('show-map');
       var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
       $.each(events, function(i, event) {
         if (event.event_id === thisEventId) {
