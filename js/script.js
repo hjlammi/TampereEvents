@@ -200,7 +200,9 @@ $(document).ready(function() {
                 if (status === 'OK') {
                   directionsDisplay.setDirections(response);
                 } else {
-                  window.alert('Directions request failed due to ' + status);
+                  bootbox.alert('Osoitetta ei löytynyt. Yritä uudelleen.');
+                  initMap();
+                  showEventsOnMap(map, events);
                 }
             });
           }
