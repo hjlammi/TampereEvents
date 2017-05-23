@@ -68,14 +68,15 @@ $(document).ready(function() {
   // Päivitetään tapahtumasivu klikkaamalla buttonia.
   $('#submit').on('click', function(){
     updateEventPage();
+        $.scrollTo('#tapahtumat', 1000);
   });
 
   // Päivitetään tapahtumasivu enterillä.
-  $('form').on('keypress', function(e) {
-    if (e.keyCode === 13) {
-      updateEventPage();
-    }
-  });
+  // $('form').on('keypress', function(e) {
+  //   if (e.keyCode === 13) {
+  //     updateEventPage();
+  //   }
+  // });
 
   // Tyhjennetään hakukentät.
   $('#clear').on('click', function(){
@@ -163,6 +164,7 @@ $(document).ready(function() {
               infowindow.open(map, marker);
             }
           });
+          $.scrollTo('#map-container', 1000);
         }
       });
     } else {
@@ -205,6 +207,7 @@ $(document).ready(function() {
                   showEventsOnMap(map, events);
                 }
             });
+            $.scrollTo('#map-container', 1000);
           }
         });
       }

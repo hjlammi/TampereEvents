@@ -90,15 +90,6 @@ button {
   box-shadow: 2px 2px 3px lightgrey;
 }
 
-.btn-group a {
-  color: #333;
-}
-
-.btn-group a:hover {
-  color: #333;
-  text-decoration: none;
-}
-
 .btn-group button {
   margin: 1px;
   border-radius: 4px !important;
