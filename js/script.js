@@ -68,7 +68,7 @@ $(document).ready(function() {
   // Päivitetään tapahtumasivu klikkaamalla buttonia.
   $('#submit').on('click', function(){
     updateEventPage();
-        $.scrollTo('#tapahtumat', 1000);
+    $.scrollTo('#tapahtumat', 1000);
   });
 
   // Päivitetään tapahtumasivu enterillä.

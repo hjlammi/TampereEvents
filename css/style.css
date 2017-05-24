@@ -11,6 +11,11 @@ body {
   display: none;
 }
 
+.tapahtuma a[href="#top"] {
+  float: right;
+  margin-top: 10px;
+}
+
 .kuva img {
   width: 100%;
   padding-bottom: 1em;
