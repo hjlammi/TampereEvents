@@ -165,13 +165,13 @@ $(document).ready(function() {
               infowindow.open(map, marker);
             }
           });
-          $.scrollTo('#map-container', 1000);
         }
       });
     } else {
       initMap();
       showEventsOnMap(map, events);
     }
+    $.scrollTo('#map-container', 1000);
   });
 
   // Näytetään reitti ja reittiohjeet kartalla.
