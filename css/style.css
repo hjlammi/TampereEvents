@@ -11,7 +11,8 @@ body {
   display: none;
 }
 
-.tapahtuma a[href="#top"] {
+.tapahtuma a[href="#top"],
+.map-container a[href="#top"] {
   float: right;
   margin-top: 10px;
 }
