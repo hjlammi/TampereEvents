@@ -72,11 +72,12 @@ $(document).ready(function() {
   });
 
   // Päivitetään tapahtumasivu enterillä.
-  // $('form').on('keypress', function(e) {
-  //   if (e.keyCode === 13) {
-  //     updateEventPage();
-  //   }
-  // });
+  $('body').on('keypress', function(e) {
+    if (e.keyCode === 13) {
+      updateEventPage();
+      $.scrollTo('#tapahtumat', 1000);
+    }
+  });
 
   // Tyhjennetään hakukentät.
   $('#clear').on('click', function(){
