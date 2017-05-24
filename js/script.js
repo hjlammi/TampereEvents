@@ -177,41 +177,36 @@ $(document).ready(function() {
   $('.tapahtuma button.directions').on('click', function() {
     $('#route-panel').empty();
     var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
-    bootbox.prompt({
-      title: "Kirjoita lähtöpaikka:",
-      callback: function(result) {
-        if (result === null) {
-          return;
+    var startPlace = prompt('Kirjoita lähtöpaikka:');
+    if (startPlace !== null) {
+      initMap();
+      var directionsService = new google.maps.DirectionsService();
+      var directionsDisplay = new google.maps.DirectionsRenderer();
+      directionsDisplay.setMap(map);
+      directionsDisplay.setPanel($('#route-panel').get(0));
+
+      $.each(events, function(i, event) {
+        if (event.event_id === thisEventId) {
+          var address = event.contact_info.address + ', ' + event.contact_info.city;
+          var title = event.title;
+
+          directionsService.route({
+              origin: startPlace,
+              destination: address,
+              travelMode: 'DRIVING'
+            }, function(response, status) {
+              if (status === 'OK') {
+                directionsDisplay.setDirections(response);
+              } else {
+                bootbox.alert('Osoitetta ei löytynyt. Yritä uudelleen.');
+                initMap();
+                showEventsOnMap(map, events);
+              }
+          });
+          $.scrollTo('#map-container', 1000);
         }
-        initMap();
-        var directionsService = new google.maps.DirectionsService();
-        var directionsDisplay = new google.maps.DirectionsRenderer();
-        directionsDisplay.setMap(map);
-        directionsDisplay.setPanel($('#route-panel').get(0));
-
-        $.each(events, function(i, event) {
-          if (event.event_id === thisEventId) {
-            var address = event.contact_info.address + ', ' + event.contact_info.city;
-            var title = event.title;
-
-            directionsService.route({
-                origin: result,
-                destination: address,
-                travelMode: 'DRIVING'
-              }, function(response, status) {
-                if (status === 'OK') {
-                  directionsDisplay.setDirections(response);
-                } else {
-                  bootbox.alert('Osoitetta ei löytynyt. Yritä uudelleen.');
-                  initMap();
-                  showEventsOnMap(map, events);
-                }
-            });
-            $.scrollTo('#map-container', 1000);
-          }
-        });
-      }
-    });
+      });
+    }
   });
 
   getData(getSearchParameters());
