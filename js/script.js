@@ -53,7 +53,7 @@ $(document).ready(function() {
     // Päivitetään tapahtumasivu.
     updateEventPage();
     // Skrollataan sivulle kohtaan tapahtumat.
-    $.scrollTo('#tapahtumat', 1000);
+-   $.scrollTo('#tapahtumat', 1000);
   });
 
   // Päivitetään tapahtumasivu enterillä.
@@ -148,7 +148,8 @@ $(document).ready(function() {
       $.each(events, function(i, event) {
         if (event.event_id === thisEventId) {
           var geocoder = new google.maps.Geocoder();
-          var address = event.contact_info.address + ', ' + event.contact_info.city;
+          var address = ((event.contact_info.address === null) ? '' : event.contact_info.address + ' ') +
+            ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city);
           var title = event.title;
           geocoder.geocode( { 'address': address}, function(results, status) {
             if (status == 'OK') {
@@ -334,7 +335,7 @@ function addEventsOnPage(events) {
 
 // Virheilmoitus jos tapahtumia ei ole.
 function errorMessage() {
-  $('#tapahtuma').after('<div class="row><div class=col-md-12 alert alert-info" role="alert">Hakuehtoja vastaavia tapahtumia ei löytynyt. Yritä uudelleen.</div></div>');
+  $('#tapahtuma').after('<div class="row><div class=col-md-12 alert alert-info" role="alert">Hakuehtoja vastaavia tapahtumia ei löytynyt.</div></div>');
 }
 
 // Metodilla päivitetään tapahtumasivu.
