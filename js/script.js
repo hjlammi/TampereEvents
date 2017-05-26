@@ -188,7 +188,8 @@ $(document).ready(function() {
 
       $.each(events, function(i, event) {
         if (event.event_id === thisEventId) {
-          var address = event.contact_info.address + ', ' + event.contact_info.city;
+          var address = ((event.contact_info.address === null) ? '' : event.contact_info.address + ' ') +
+            ((event.contact_info.city === null) ? 'Tampere' : event.contact_info.city);
           var title = event.title;
 
           directionsService.route({
