@@ -367,7 +367,7 @@ function addEventOnPage(event) {
     var ends_date = moment(o.ends).format("D.M.YYYY");
     var ends_time = moment(o.ends).format("H.mm");
 
-    eventElement.find('.ajat ').append('<p>' + begins_date + ' at ' + begins_time + ' &ndash; ' + ends_date + ' at ' + ends_time + '</p>');
+    eventElement.find('.ajat ').append('<p>' + begins_date + ' klo ' + begins_time + ' &ndash; ' + ends_date + ' klo ' + ends_time + '</p>');
     return (i < 2);
   });
 
