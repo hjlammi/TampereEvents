@@ -1,3 +1,5 @@
+// Muodostetaan oma tapahtumaolio, johon otetaan vain tarvittavat tiedot ja tehdään
+// korvaava taulukko tapahtuman ajoille eli occurrenceseille.
 function makeEvent(apiEvent, beginsAt) {
   var occurrences = [];
   if (apiEvent.times !== undefined && apiEvent.times.length > 0) {
@@ -26,10 +28,13 @@ function makeEvent(apiEvent, beginsAt) {
   };
 }
 
+// Metodi tutkii onko tapahtuman ajankohta annetun aikaikkunan sisällä.
 function isOccurrenceInRange(occurrence, beginsAt) {
+  // Jos tapahtuman päättymisaika on myöhemmin kuin alkamisaika, ajankohta on aikaikkunan sisällä.
   return occurrence.ends >= beginsAt;
 }
 
+// Poistetaan tapahtumat, jotka eivät ole annetun aikaikkunan sisällä.
 function removeOccurrencesThatNotInRange(occurrences, beginsAt) {
   var occurrencesInRange = [];
   $.each(occurrences, function(i, occurrence){
@@ -62,27 +67,4 @@ function makeEvents(apiEvents, beginsAt, lastBeginsAt) {
   return events.sort(function(a, b) {
     return a.occurrences[0].begins - b.occurrences[0].begins;
   });
-}
-
-function isLastDateSameAsBeginsDate(event, lastBeginsAt) {
-  if (event.occurrences[0].begins <= lastBeginsAt) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function findEventWithId(id, events) {
-  var result;
-  $.each(events, function(i, event) {
-    if (event.event_id === id) {
-      result = event;
-      return false;
-    }
-  });
-  return result;
-}
-
-function findEventIndex(id, events) {
-
 }
