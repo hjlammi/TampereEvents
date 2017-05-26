@@ -185,7 +185,12 @@ $(document).ready(function() {
     var thisEventId = parseInt($(this).parents('.tapahtuma').attr('data-event_id'));
     // Pyydetään käyttäjältä lähtöpaikan osoitetieto.
     var startPlace = prompt('Kirjoita lähtöpaikka:');
-    if (startPlace !== null) {
+    // Jos painetaan cancelia, poistutaan suorituksesta.
+    if (startPlace === null) {
+      return;
+    }
+    // Jos käyttäjä kirjoittaa kenttään jotain...
+    if (startPlace !== "") {
       initMap();
       var directionsService = new google.maps.DirectionsService();
       var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -210,7 +215,8 @@ $(document).ready(function() {
               if (status === 'OK') {
                 directionsDisplay.setDirections(response);
               } else {
-                // Jos osoite oli virheellinen näytetään virheilmoitus.
+                // Jos osoite oli virheellinen näytetään virheilmoitus ja näytetään alkuperäiset
+                // tapahtumat sivulla.
                 bootbox.alert('Osoitetta ei löytynyt. Yritä uudelleen.');
                 initMap();
                 showEventsOnMap(map, events);
