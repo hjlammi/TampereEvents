@@ -1,8 +1,5 @@
 body {
   background: url('../images/Tampere,_view50.jpg') no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
   background-size: cover;
 }
 
